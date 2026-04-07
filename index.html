@@ -224,7 +224,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
     <label>Gemini API Key</label>
     <input type="password" id="gemini-key" placeholder="AIza..." />
     <label>AI 模型</label>
-    <input type="text" id="gemini-model" value="gemini-1.5-flash" placeholder="gemini-1.5-flash" />
+    <input type="text" id="gemini-model" value="gemini-2.5-flash" placeholder="gemini-2.5-flash" />
     <label>Entrez Email（PubMed 用）</label>
     <input type="email" id="entrez-email" placeholder="your@email.com" />
   </div>
@@ -393,7 +393,7 @@ async function translateTitle(title) {
 /* ── GEMINI (non-streaming, reliable) ── */
 async function callGemini(art) {
   const apiKey = v('gemini-key');
-  const model = v('gemini-model') || 'gemini-1.5-flash';
+  const model = v('gemini-model') || 'gemini-2.5-flash';
   if (!apiKey) throw new Error('請先輸入 Gemini API Key');
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;

@@ -56,7 +56,7 @@ SEARCH_CONFIG = {
 }
 
 # ── Gemini 模型 ─────────────────────────────────────────
-GEMINI_MODEL = "gemini-1.5-flash"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 
 def build_query() -> str:

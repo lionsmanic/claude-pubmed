@@ -138,27 +138,36 @@ def analyze_with_gemini(art: dict) -> str:
         f"{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
     )
 
-    prompt = f"""
-你是一位台灣頂尖的婦科腫瘤科醫師。請閱讀以下英文摘要，以繁體中文（台灣用語）撰寫深度評讀報告。
+    prompt = f"""你是一位在台灣執業多年的婦科腫瘤科醫師，擅長閱讀英文醫學文獻並消化轉譯給同儕。
+
+請完整閱讀以下論文摘要，用繁體中文（台灣用語）寫出一份「臨床評讀摘要」。
+目標讀者是忙碌的婦癌醫師，希望在 2 分鐘內掌握這篇文章的精華與臨床意義。
 
 標題：{art['title']}
 期刊：{art['journal']}
-摘要：{art['abstract']}
+摘要原文：{art['abstract']}
 
-請依照以下結構，以 HTML 格式輸出（使用 <h4>, <ul>, <li>, <p>, <b> 標籤）：
+請依以下四個區塊輸出 HTML，直接使用 <h4>, <p>, <ul>, <li>, <strong> 標籤，不要輸出 ```html：
 
-<h4>🧪 研究設計與方法</h4>
-<h4>💡 研究動機與背景</h4>
-<h4>📊 重要數據與結果</h4>
-<h4>🏥 臨床實務應用</h4>
-<h4>⭐ 對婦癌醫師的重要啟示</h4>
+<h4>🔬 這篇在研究什麼？</h4>
+<p>（2–3 句流暢說明：研究背景、設計類型、樣本規模、主要研究問題）</p>
 
-每節用 2-4 個 <li> 條列，語言專業精練。請直接輸出 HTML，不要包含 ```html 標記。
-"""
+<h4>📊 關鍵數據與結果</h4>
+<ul><li>（3–5 條最重要數據，含具體數字、p值、HR、OS、PFS，完整呈現）</li></ul>
+
+<h4>🏥 對臨床實務的影響</h4>
+<p>（2–3 句：哪些病人受益？是否改變治療決策？與 NCCN/ESMO 指引的關係？）</p>
+
+<h4>⭐ 一句話總結</h4>
+<p><strong>（最多 50 字，總結最值得婦癌醫師記住的事）</strong></p>"""
 
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 1500},
+        "generationConfig": {
+            "temperature": 0.3,
+            "maxOutputTokens": 2048,
+            "thinkingConfig": {"thinkingBudget": 0}
+        },
     }
 
     try:

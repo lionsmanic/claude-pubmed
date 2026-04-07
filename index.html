@@ -397,40 +397,43 @@ async function callGemini(art) {
   if (!apiKey) throw new Error('請先輸入 Gemini API Key');
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  const prompt = `你是台灣婦科腫瘤科醫師。閱讀以下英文摘要，用繁體中文撰寫評讀。
+  const prompt = `你是一位在台灣執業多年的婦科腫瘤科醫師，擅長閱讀英文醫學文獻並消化轉譯給同儕。
 
+請完整閱讀以下這篇論文的摘要，然後用繁體中文（台灣用語）寫出一份「臨床評讀摘要」。
+目標讀者是忙碌的婦癌醫師，希望在 2 分鐘內掌握這篇文章的精華與臨床意義。
+
+【論文資訊】
 標題：${art.title}
 期刊：${art.journal}
-摘要：${art.abstract}
+摘要原文：${art.abstract}
 
-嚴格按照以下格式，每區塊恰好 3 條重點，每條最多 40 字，數據直接呈現：
+【請依以下四個區塊輸出，每個區塊以 ### 開頭】
 
-### 🧪 研究設計與方法
-• （一句話說明研究類型、樣本數、時間）
-• （納入排除標準或分組方式）
-• （主要評估指標）
+### 🔬 這篇在研究什麼？
+用 2–3 句話說明研究背景、設計類型、樣本規模和主要研究問題。
+不要只列清單，請寫成流暢的說明文字。
 
-### 📊 重要數據與結果
-• （最重要的療效數據，含 p 值或 HR）
-• （次要終點數據）
-• （安全性或不良事件摘要）
+### 📊 關鍵數據與結果
+列出 3–5 條最重要的數據發現（含具體數字、p值、HR、OS、PFS 等）。
+每條以 • 開頭，數據要完整呈現，不要省略百分比或統計值。
 
-### 🏥 臨床實務應用
-• （對台灣臨床實務的直接影響）
-• （適用病患族群）
-• （與現行指引的關係）
+### 🏥 對臨床實務的影響
+2–3 句話說明這個結果對台灣婦癌醫師的實際意義：
+哪些病人可能受益？是否改變現行治療決策？與 NCCN/ESMO 指引的關係？
 
-### ⭐ 婦癌醫師重要啟示
-• （最值得關注的結論）
-• （研究限制或注意事項）
-• （未來研究方向）`;
+### ⭐ 一句話總結
+用一句話（最多 50 字）總結「這篇文章最值得婦癌醫師記住的事」。`;
 
   const resp = await fetch(url, {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
       contents:[{parts:[{text:prompt}]}],
-      generationConfig:{temperature:0.2, maxOutputTokens:1500}
+      generationConfig:{
+        temperature:0.3,
+        maxOutputTokens:2048,
+        thinkingConfig:{ thinkingBudget:0 }   // 關閉思考模式，避免耗盡 token
+      }
     })
   });
 
@@ -445,33 +448,9 @@ async function callGemini(art) {
 
   const finishReason = data.candidates?.[0]?.finishReason;
   if (finishReason === 'MAX_TOKENS') {
-    // retry with shorter abstract if truncated
-    return await callGeminiShort(art, apiKey, model);
+    return text + '\n\n> ⚠️ 內容被截斷，請在左側將模型改為 gemini-2.5-flash 後重新分析。';
   }
   return text;
-}
-
-async function callGeminiShort(art, apiKey, model) {
-  // fallback: truncate abstract to 800 chars and retry
-  const shortAbstract = art.abstract.slice(0, 800) + (art.abstract.length > 800 ? '…' : '');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-  const prompt = `台灣婦科腫瘤科醫師視角，用繁體中文評讀以下論文，每區塊 3 條重點，每條最多 35 字：
-
-標題：${art.title}
-摘要（節錄）：${shortAbstract}
-
-### 🧪 研究設計與方法
-### 📊 重要數據與結果
-### 🏥 臨床實務應用
-### ⭐ 婦癌醫師重要啟示`;
-
-  const resp = await fetch(url, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.2,maxOutputTokens:1000}})
-  });
-  const data = await resp.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '評讀失敗，請重試。';
-  return text + '\n\n*（摘要過長，已節錄分析）*';
 }
 
 /* ── RENDER MARKDOWN ── */

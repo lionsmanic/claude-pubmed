@@ -1,0 +1,54 @@
+name: Weekly GynOnc Literature Report
+
+on:
+  # 每週一早上 8:00 台灣時間 (UTC+8 = UTC 00:00)
+  schedule:
+    - cron: '0 0 * * 1'
+
+  # 也可以手動在 GitHub 網頁上觸發
+  workflow_dispatch:
+    inputs:
+      days_back:
+        description: '搜尋最近幾天的文章'
+        required: false
+        default: '7'
+      max_results:
+        description: '最多幾篇'
+        required: false
+        default: '10'
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install biopython requests
+
+      - name: Run literature report generator
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          DAYS_BACK: ${{ github.event.inputs.days_back || '7' }}
+          MAX_RESULTS: ${{ github.event.inputs.max_results || '10' }}
+        run: |
+          python scripts/auto_report.py
+
+      - name: Upload report artifact (backup)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: weekly-report-${{ github.run_id }}
+          path: report_output.html
+          retention-days: 30

@@ -8,249 +8,195 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream: #fdf8f2;
-  --warm-white: #fff9f4;
-  --parchment: #f5ede0;
-  --sand: #e8d5bb;
-  --gold: #c9922a;
-  --gold-light: #e8b84b;
-  --gold-pale: #faf0dc;
-  --sienna: #a0522d;
-  --rust: #c0603a;
-  --teal: #2a7c74;
-  --teal-light: #3a9e94;
-  --teal-pale: #e8f4f2;
-  --ink: #2c1f14;
-  --ink-mid: #4a3728;
-  --ink-light: #7a6155;
-  --ink-muted: #a89080;
-  --border: rgba(180,130,80,0.18);
-  --border-warm: rgba(180,130,80,0.38);
-  --shadow-sm: 0 2px 12px rgba(80,40,10,0.07);
-  --shadow-md: 0 6px 30px rgba(80,40,10,0.11);
-  --danger: #c0392b;
-  --success: #2a7c74;
+  --cream:#fdf8f2; --warm-white:#fff9f4; --parchment:#f5ede0; --sand:#e8d5bb;
+  --gold:#c9922a; --gold-light:#e8b84b; --gold-pale:#faf0dc;
+  --sienna:#a0522d; --rust:#c0603a;
+  --teal:#2a7c74; --teal-light:#3a9e94; --teal-pale:#e8f4f2;
+  --ink:#2c1f14; --ink-mid:#4a3728; --ink-light:#7a6155; --ink-muted:#a89080;
+  --border:rgba(180,130,80,0.18); --border-warm:rgba(180,130,80,0.38);
+  --shadow-sm:0 2px 12px rgba(80,40,10,0.07); --shadow-md:0 6px 30px rgba(80,40,10,0.11);
+  --danger:#c0392b; --danger-pale:#fff0ee;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background: var(--cream);
-  color: var(--ink);
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  grid-template-rows: auto 1fr;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--cream);color:var(--ink);
+  min-height:100vh;display:grid;grid-template-columns:340px 1fr;grid-template-rows:auto 1fr;}
 
 /* HEADER */
-header {
-  grid-column: 1 / -1;
-  background: var(--ink);
-  padding: 0 2.5rem;
-  height: 66px;
-  display: flex; align-items: center; gap: 1.5rem;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 24px rgba(0,0,0,0.22);
-}
-.logo { display: flex; align-items: center; gap: 13px; }
-.logo-mark {
-  width: 38px; height: 38px; flex-shrink: 0;
-  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
-  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-}
-.logo-text h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.1rem; font-weight: 600; color: #fdf8f2; letter-spacing: 0.02em;
-}
-.logo-text p { font-size: 0.67rem; color: #8a7060; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 1px; }
-.header-right { margin-left: auto; }
-.status-pill {
-  display: flex; align-items: center; gap: 8px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px; padding: 5px 14px;
-}
-.pulse { width: 7px; height: 7px; border-radius: 50%; background: #52c78a; transition: background 0.3s; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
-#status-text { font-size: 0.72rem; color: rgba(255,255,255,0.55); font-family: 'JetBrains Mono', monospace; }
+header{grid-column:1/-1;background:var(--ink);padding:0 2.5rem;height:66px;
+  display:flex;align-items:center;gap:1.5rem;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 24px rgba(0,0,0,0.22);}
+.logo{display:flex;align-items:center;gap:13px;}
+.logo-mark{width:38px;height:38px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);}
+.logo-text h1{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;
+  color:#fdf8f2;letter-spacing:.02em;}
+.logo-text p{font-size:.67rem;color:#8a7060;letter-spacing:.1em;text-transform:uppercase;margin-top:1px;}
+.header-right{margin-left:auto;}
+.status-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:5px 14px;}
+.pulse{width:7px;height:7px;border-radius:50%;background:#52c78a;transition:background .3s;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+#status-text{font-size:.72rem;color:rgba(255,255,255,.55);font-family:'JetBrains Mono',monospace;}
 
 /* SIDEBAR */
-aside {
-  background: var(--warm-white);
-  border-right: 1px solid var(--border);
-  padding: 1.4rem;
-  overflow-y: auto;
-  height: calc(100vh - 66px);
-  position: sticky; top: 66px;
-  display: flex; flex-direction: column; gap: 1rem;
-}
-aside::-webkit-scrollbar { width: 4px; }
-aside::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 2px; }
+aside{background:var(--warm-white);border-right:1px solid var(--border);padding:1.4rem;
+  overflow-y:auto;height:calc(100vh - 66px);position:sticky;top:66px;
+  display:flex;flex-direction:column;gap:1rem;}
+aside::-webkit-scrollbar{width:4px;}
+aside::-webkit-scrollbar-thumb{background:var(--sand);border-radius:2px;}
 
-.panel {
-  background: white;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 1.1rem 1.2rem;
-  box-shadow: var(--shadow-sm);
-}
-.panel-label {
-  font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--gold); font-weight: 700; margin-bottom: 0.9rem;
-  display: flex; align-items: center; gap: 7px;
-}
-.panel-label::after { content:''; flex:1; height:1px; background:var(--border); }
+.panel{background:white;border:1.5px solid var(--border);border-radius:14px;
+  padding:1.1rem 1.2rem;box-shadow:var(--shadow-sm);}
+.panel-label{font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);font-weight:700;margin-bottom:.9rem;
+  display:flex;align-items:center;gap:7px;}
+.panel-label::after{content:'';flex:1;height:1px;background:var(--border);}
 
-label { display:block; font-size:0.8rem; color:var(--ink-light); margin-bottom:4px; font-weight:500; }
-input[type=text], input[type=password], input[type=email], input[type=number] {
-  width:100%; background:var(--cream); border:1.5px solid var(--border);
-  border-radius:8px; color:var(--ink); padding:0.48rem 0.8rem;
-  font-family:'Plus Jakarta Sans',sans-serif; font-size:0.82rem;
-  outline:none; transition:border-color 0.2s, box-shadow 0.2s; margin-bottom:0.65rem;
-}
-input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,146,42,0.12); }
-.two-col { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+label{display:block;font-size:.8rem;color:var(--ink-light);margin-bottom:4px;font-weight:500;}
+input[type=text],input[type=password],input[type=email],input[type=number]{
+  width:100%;background:var(--cream);border:1.5px solid var(--border);
+  border-radius:8px;color:var(--ink);padding:.48rem .8rem;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;
+  outline:none;transition:border-color .2s,box-shadow .2s;margin-bottom:.65rem;}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,146,42,.12);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
 
-.check-grid { display:flex; flex-direction:column; gap:0.28rem; margin-bottom:0.75rem; }
-.check-item {
-  display:flex; align-items:center; gap:8px;
-  padding:0.32rem 0.65rem; border-radius:8px;
-  cursor:pointer; font-size:0.82rem; color:var(--ink-mid);
-  border:1.5px solid transparent; transition:all 0.15s; user-select:none;
-}
-.check-item:has(input:checked) { background:var(--gold-pale); border-color:rgba(201,146,42,0.28); color:var(--ink); }
-.check-item input[type=checkbox] { accent-color:var(--gold); flex-shrink:0;
-  width:auto; margin:0; padding:0; border:none; background:none; box-shadow:none; }
-.inline-check { display:flex; align-items:center; gap:7px; font-size:0.82rem; color:var(--ink-mid); margin-bottom:0.7rem; cursor:pointer; }
-.inline-check input { accent-color:var(--gold); width:auto; margin:0; padding:0; border:none; background:none; box-shadow:none; }
+.check-grid{display:flex;flex-direction:column;gap:.28rem;margin-bottom:.75rem;}
+.check-item{display:flex;align-items:center;gap:8px;padding:.32rem .65rem;border-radius:8px;
+  cursor:pointer;font-size:.82rem;color:var(--ink-mid);
+  border:1.5px solid transparent;transition:all .15s;user-select:none;}
+.check-item:has(input:checked){background:var(--gold-pale);border-color:rgba(201,146,42,.28);color:var(--ink);}
+.check-item input[type=checkbox]{accent-color:var(--gold);width:auto;margin:0;padding:0;border:none;background:none;box-shadow:none;}
+.inline-check{display:flex;align-items:center;gap:7px;font-size:.82rem;color:var(--ink-mid);
+  margin-bottom:.7rem;cursor:pointer;}
+.inline-check input{accent-color:var(--gold);width:auto;margin:0;padding:0;border:none;background:none;box-shadow:none;}
 
 /* BUTTONS */
-.btn {
-  display:inline-flex; align-items:center; justify-content:center; gap:6px;
-  padding:0.58rem 1rem; border-radius:9px; border:none;
-  cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:0.83rem; font-weight:600; transition:all 0.18s;
-  width:100%; white-space:nowrap; letter-spacing:0.01em;
-}
-.btn-gold {
-  background:linear-gradient(135deg,var(--gold-light),var(--gold));
-  color:white; box-shadow:0 3px 14px rgba(201,146,42,0.32);
-}
-.btn-gold:hover { filter:brightness(1.07); transform:translateY(-1px); }
-.btn-gold:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
-.btn-teal { background:var(--teal); color:white; box-shadow:0 3px 12px rgba(42,124,116,0.28); }
-.btn-teal:hover { background:var(--teal-light); transform:translateY(-1px); }
-.btn-outline { background:white; color:var(--ink-mid); border:1.5px solid var(--border-warm); }
-.btn-outline:hover { background:var(--parchment); border-color:var(--gold); color:var(--ink); }
-.btn-stop { background:#fff0ee; color:var(--danger); border:1.5px solid rgba(192,57,43,0.22); }
-.btn-stop:hover { background:#ffe4e0; }
-.btn-sm { width:auto; padding:0.33rem 0.85rem; font-size:0.76rem; border-radius:7px; }
-.btn-row { display:flex; gap:0.5rem; }
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:.58rem 1rem;border-radius:9px;border:none;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:.83rem;font-weight:600;
+  transition:all .18s;width:100%;white-space:nowrap;letter-spacing:.01em;}
+.btn-gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:white;
+  box-shadow:0 3px 14px rgba(201,146,42,.32);}
+.btn-gold:hover{filter:brightness(1.07);transform:translateY(-1px);}
+.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-teal{background:var(--teal);color:white;box-shadow:0 3px 12px rgba(42,124,116,.28);}
+.btn-teal:hover{background:var(--teal-light);transform:translateY(-1px);}
+.btn-teal:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-outline{background:white;color:var(--ink-mid);border:1.5px solid var(--border-warm);}
+.btn-outline:hover{background:var(--parchment);border-color:var(--gold);color:var(--ink);}
+.btn-outline:disabled{opacity:.4;cursor:not-allowed;}
+.btn-stop{background:var(--danger-pale);color:var(--danger);border:1.5px solid rgba(192,57,43,.22);}
+.btn-stop:hover{background:#ffe4e0;}
+.btn-selected{background:var(--teal-pale);color:var(--teal);border:1.5px solid rgba(42,124,116,.3);}
+.btn-selected:hover{background:var(--teal);color:white;}
+.btn-sm{width:auto;padding:.33rem .85rem;font-size:.76rem;border-radius:7px;}
+.btn-row{display:flex;gap:.5rem;}
 
 /* MAIN */
-main {
-  background:var(--cream); padding:2rem 2.5rem;
-  overflow-y:auto; height:calc(100vh - 66px);
-}
-main::-webkit-scrollbar { width:5px; }
-main::-webkit-scrollbar-thumb { background:var(--sand); border-radius:3px; }
+main{background:var(--cream);padding:2rem 2.5rem;overflow-y:auto;height:calc(100vh - 66px);}
+main::-webkit-scrollbar{width:5px;}
+main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
 
-.toolbar {
-  display:flex; align-items:center; gap:0.8rem;
-  margin-bottom:1.8rem; flex-wrap:wrap;
-}
-.toolbar-title { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--ink); }
-.count-pill {
-  background:var(--gold-pale); color:var(--gold);
-  border:1px solid rgba(201,146,42,0.28);
-  font-size:0.73rem; font-weight:600; padding:3px 11px; border-radius:20px;
-  font-family:'JetBrains Mono',monospace;
-}
-.toolbar-gap { flex:1; }
+.toolbar{display:flex;align-items:center;gap:.7rem;margin-bottom:1.8rem;flex-wrap:wrap;}
+.toolbar-title{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--ink);}
+.count-pill{background:var(--gold-pale);color:var(--gold);
+  border:1px solid rgba(201,146,42,.28);font-size:.73rem;font-weight:600;
+  padding:3px 11px;border-radius:20px;font-family:'JetBrains Mono',monospace;}
+.toolbar-gap{flex:1;}
 
-#progress-wrap { height:3px; background:var(--sand); border-radius:2px; margin-bottom:1.5rem; overflow:hidden; display:none; }
-#progress-wrap.on { display:block; }
-#progress-bar { height:100%; width:0%; background:linear-gradient(90deg,var(--gold-light),var(--teal-light)); border-radius:2px; transition:width 0.5s ease; }
+#progress-wrap{height:3px;background:var(--sand);border-radius:2px;margin-bottom:1.5rem;overflow:hidden;display:none;}
+#progress-wrap.on{display:block;}
+#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-light),var(--teal-light));
+  border-radius:2px;transition:width .5s ease;}
+
+/* SELECT BAR */
+#select-bar{
+  background:white;border:1.5px solid var(--border);border-radius:12px;
+  padding:.75rem 1.2rem;margin-bottom:1.2rem;
+  display:none;align-items:center;gap:.8rem;flex-wrap:wrap;
+}
+#select-bar.show{display:flex;}
+.sel-count{font-size:.82rem;color:var(--ink-mid);font-weight:500;}
+.sel-count strong{color:var(--teal);}
 
 /* ARTICLE CARDS */
-.article-card {
-  background:white; border:1.5px solid var(--border);
-  border-radius:16px; margin-bottom:1.2rem;
-  box-shadow:var(--shadow-sm); overflow:hidden;
-  transition:border-color 0.2s, box-shadow 0.2s;
-}
-.article-card:hover { border-color:var(--border-warm); box-shadow:var(--shadow-md); }
+.article-card{background:white;border:1.5px solid var(--border);border-radius:16px;
+  margin-bottom:1.2rem;box-shadow:var(--shadow-sm);overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;}
+.article-card:hover{border-color:var(--border-warm);box-shadow:var(--shadow-md);}
+.article-card.selected{border-color:rgba(42,124,116,.45);background:linear-gradient(180deg,rgba(232,244,242,.4),white);}
 
-.card-top { padding:1.4rem 1.6rem 0.2rem; display:flex; gap:1.2rem; align-items:flex-start; }
-.card-num { font-family:'Playfair Display',serif; font-style:italic; font-size:1.7rem; color:var(--sand); line-height:1; min-width:34px; padding-top:3px; flex-shrink:0; }
-.card-body { flex:1; min-width:0; }
-.card-en { font-size:1rem; font-weight:600; line-height:1.45; color:var(--ink); margin-bottom:0.35rem; }
-.card-en a { color:inherit; text-decoration:none; }
-.card-en a:hover { color:var(--teal); }
-.card-zh { font-size:0.9rem; color:var(--teal); font-weight:500; line-height:1.4; margin-bottom:0.5rem; }
-.card-meta { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; }
-.meta-j { font-size:0.74rem; color:var(--ink-light); font-family:'JetBrains Mono',monospace; }
-.meta-tag { font-size:0.67rem; padding:2px 8px; border-radius:5px; background:var(--parchment); color:var(--sienna); border:1px solid var(--sand); font-weight:500; }
+.card-top{padding:1.4rem 1.6rem .2rem;display:flex;gap:1rem;align-items:flex-start;}
+.card-check{padding-top:4px;flex-shrink:0;}
+.card-check input[type=checkbox]{width:17px;height:17px;accent-color:var(--teal);cursor:pointer;}
+.card-num{font-family:'Playfair Display',serif;font-style:italic;font-size:1.7rem;
+  color:var(--sand);line-height:1;min-width:34px;padding-top:3px;flex-shrink:0;}
+.card-body{flex:1;min-width:0;}
+.card-en{font-size:1rem;font-weight:600;line-height:1.45;color:var(--ink);margin-bottom:.35rem;}
+.card-en a{color:inherit;text-decoration:none;}
+.card-en a:hover{color:var(--teal);}
+.card-zh{font-size:.9rem;color:var(--teal);font-weight:500;line-height:1.4;margin-bottom:.5rem;}
+.card-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+.meta-j{font-size:.74rem;color:var(--ink-light);font-family:'JetBrains Mono',monospace;}
+.meta-tag{font-size:.67rem;padding:2px 8px;border-radius:5px;
+  background:var(--parchment);color:var(--sienna);border:1px solid var(--sand);font-weight:500;}
 
-.card-actions { padding:0.9rem 1.6rem 1.2rem; display:flex; gap:0.5rem; flex-wrap:wrap; }
+.card-actions{padding:.9rem 1.6rem 1.2rem;display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;}
 
 /* ANALYSIS */
-.analysis-wrap { border-top:1.5px solid var(--border); background:linear-gradient(180deg,var(--teal-pale) 0%,white 100%); display:none; }
-.analysis-wrap.open { display:block; }
-.analysis-inner { padding:1.6rem 1.9rem; }
+.analysis-wrap{border-top:1.5px solid var(--border);
+  background:linear-gradient(180deg,var(--teal-pale) 0%,white 100%);display:none;}
+.analysis-wrap.open{display:block;}
+.analysis-inner{padding:1.6rem 1.9rem;}
 
-.thinking-box {
-  display:flex; align-items:center; gap:12px; padding:1rem;
-  background:var(--gold-pale); border-radius:10px; border:1px solid var(--sand);
-}
-.dots span {
-  display:inline-block; width:7px; height:7px; border-radius:50%;
-  background:var(--gold); margin:0 2px; animation:bounce 1.2s infinite;
-}
-.dots span:nth-child(2){animation-delay:.2s} .dots span:nth-child(3){animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}}
-.thinking-txt { font-size:0.83rem; color:var(--ink-mid); }
+/* spinner */
+.spinner-box{display:flex;align-items:center;gap:14px;padding:1.2rem;
+  background:var(--gold-pale);border-radius:10px;border:1px solid var(--sand);}
+.spinner{width:22px;height:22px;border:3px solid var(--sand);
+  border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-txt{font-size:.85rem;color:var(--ink-mid);}
+.spinner-sub{font-size:.75rem;color:var(--ink-muted);margin-top:2px;}
 
-.analysis-body { font-size:0.9rem; line-height:1.82; color:var(--ink-mid); }
-.sec { margin-bottom:1.3rem; }
-.sec-title {
-  font-size:0.78rem; font-weight:700; letter-spacing:0.09em; text-transform:uppercase;
-  color:var(--teal); margin-bottom:0.55rem;
-  display:flex; align-items:center; gap:8px;
-}
-.sec-title::after { content:''; flex:1; height:1px; background:rgba(42,124,116,0.2); }
-.analysis-body ul { padding-left:1.2rem; }
-.analysis-body li { margin-bottom:0.4rem; }
-.analysis-body p { margin-bottom:0.5rem; }
-.analysis-body strong { color:var(--ink); font-weight:600; }
-
-.stream-cursor::after { content:'▋'; animation:cur .8s infinite; color:var(--gold); }
-@keyframes cur{0%,100%{opacity:1}50%{opacity:0}}
+/* analysis content */
+.analysis-body{font-size:.9rem;line-height:1.85;color:var(--ink-mid);}
+.sec{margin-bottom:1.4rem;}
+.sec-title{font-size:.78rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--teal);margin-bottom:.6rem;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:rgba(42,124,116,.2);}
+.analysis-body ul{padding-left:1.2rem;}
+.analysis-body li{margin-bottom:.45rem;}
+.analysis-body p{margin-bottom:.5rem;}
+.analysis-body strong{color:var(--ink);font-weight:600;}
 
 /* EMPTY */
-.empty { text-align:center; padding:6rem 2rem; }
-.empty-glyph { font-family:'Playfair Display',serif; font-style:italic; font-size:3.5rem; color:var(--sand); margin-bottom:1rem; }
-.empty h2 { font-family:'Playfair Display',serif; font-size:1.35rem; color:var(--ink-muted); margin-bottom:0.5rem; }
-.empty p { font-size:0.88rem; color:var(--ink-muted); line-height:1.8; }
+.empty{text-align:center;padding:6rem 2rem;}
+.empty-glyph{font-family:'Playfair Display',serif;font-style:italic;font-size:3.5rem;color:var(--sand);margin-bottom:1rem;}
+.empty h2{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--ink-muted);margin-bottom:.5rem;}
+.empty p{font-size:.88rem;color:var(--ink-muted);line-height:1.8;}
 
 /* TOAST */
-#toast {
-  position:fixed; bottom:2rem; right:2rem; z-index:999;
-  background:var(--ink); color:var(--cream);
-  border-radius:10px; padding:0.75rem 1.3rem; font-size:0.83rem;
-  box-shadow:0 8px 30px rgba(0,0,0,0.2);
-  transform:translateY(14px) scale(0.96); opacity:0;
-  transition:all 0.25s; pointer-events:none; max-width:340px;
-}
-#toast.show { transform:translateY(0) scale(1); opacity:1; }
-#toast.ok { background:var(--teal); }
-#toast.err { background:var(--danger); }
+#toast{position:fixed;bottom:2rem;right:2rem;z-index:999;
+  background:var(--ink);color:var(--cream);border-radius:10px;padding:.75rem 1.3rem;
+  font-size:.83rem;box-shadow:0 8px 30px rgba(0,0,0,.2);
+  transform:translateY(14px) scale(.96);opacity:0;transition:all .25s;
+  pointer-events:none;max-width:340px;}
+#toast.show{transform:translateY(0) scale(1);opacity:1;}
+#toast.ok{background:var(--teal);}
+#toast.err{background:var(--danger);}
 
-.n-badge {
-  display:inline-flex; align-items:center; justify-content:center;
-  width:18px; height:18px; border-radius:50%;
-  background:var(--rust); color:white; font-size:0.62rem; font-weight:700; margin-left:3px;
+.n-badge{display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--rust);color:white;font-size:.62rem;font-weight:700;margin-left:3px;}
+
+/* analysis progress inline */
+.analysis-progress{
+  font-size:.75rem;color:var(--ink-muted);font-family:'JetBrains Mono',monospace;
+  padding:.4rem .8rem;background:var(--gold-pale);border-radius:6px;
+  border:1px solid var(--sand);display:inline-block;margin-bottom:.8rem;
 }
 </style>
 </head>
@@ -261,7 +207,7 @@ main::-webkit-scrollbar-thumb { background:var(--sand); border-radius:3px; }
     <div class="logo-mark"></div>
     <div class="logo-text">
       <h1>GynOnc Literature Monitor</h1>
-      <p>PubMed × Gemini 2.5 Flash · 婦科腫瘤文獻智慧評讀</p>
+      <p>PubMed × Gemini AI · 婦科腫瘤文獻智慧評讀</p>
     </div>
   </div>
   <div class="header-right">
@@ -277,6 +223,8 @@ main::-webkit-scrollbar-thumb { background:var(--sand); border-radius:3px; }
     <div class="panel-label">API 設定</div>
     <label>Gemini API Key</label>
     <input type="password" id="gemini-key" placeholder="AIza..." />
+    <label>AI 模型</label>
+    <input type="text" id="gemini-model" value="gemini-2.0-flash" placeholder="gemini-2.0-flash" />
     <label>Entrez Email（PubMed 用）</label>
     <input type="email" id="entrez-email" placeholder="your@email.com" />
   </div>
@@ -308,10 +256,17 @@ main::-webkit-scrollbar-thumb { background:var(--sand); border-radius:3px; }
     <input type="text" id="gh-owner" placeholder="lionsmanic" />
     <label>Repository 名稱</label>
     <input type="text" id="gh-repo" placeholder="gynonc-monitor" />
+    <label>主分支名稱</label>
+    <input type="text" id="gh-branch" value="main" placeholder="main 或 master" />
+    <label>Workflow 檔案名稱</label>
+    <input type="text" id="gh-workflow" value="weekly_report.yml" placeholder="weekly_report.yml" />
     <label>Personal Access Token</label>
     <input type="password" id="gh-token" placeholder="ghp_..." />
     <button class="btn btn-teal" onclick="triggerGitHubReport()">觸發 Actions 寄信</button>
-    <p style="font-size:0.71rem;color:var(--ink-muted);margin-top:0.6rem;line-height:1.6">約 2–3 分鐘後信件寄到 Gmail。Token 需有 <code style="color:var(--gold)">workflow</code> 權限。</p>
+    <p style="font-size:.71rem;color:var(--ink-muted);margin-top:.6rem;line-height:1.6">
+      Token 需有 <code style="color:var(--gold)">workflow</code> 權限。<br>
+      寄信失敗時請確認分支名稱（main/master）和 Workflow 檔名。
+    </p>
   </div>
 
   <div class="btn-row">
@@ -325,9 +280,19 @@ main::-webkit-scrollbar-thumb { background:var(--sand); border-radius:3px; }
     <span class="toolbar-title">文獻列表</span>
     <span class="count-pill" id="results-count" style="display:none">0 篇</span>
     <div class="toolbar-gap"></div>
+    <button class="btn btn-outline btn-sm" onclick="toggleSelectMode()" id="select-mode-btn" style="display:none">☐ 勾選模式</button>
     <button class="btn btn-outline btn-sm" onclick="clearCart()">清空購物車</button>
-    <button class="btn btn-teal btn-sm" id="analyze-all-btn" onclick="analyzeAll()">全部 AI 分析</button>
-    <button class="btn btn-stop btn-sm" id="abort-btn" style="display:none" onclick="abortAll()">停止分析</button>
+    <button class="btn btn-teal btn-sm" id="analyze-all-btn" onclick="analyzeAll()" style="display:none">全部分析</button>
+    <button class="btn btn-stop btn-sm" id="abort-btn" style="display:none" onclick="abortAll()">⏹ 停止</button>
+  </div>
+
+  <!-- SELECT BAR -->
+  <div id="select-bar">
+    <span class="sel-count">已勾選 <strong id="sel-num">0</strong> 篇</span>
+    <button class="btn btn-outline btn-sm" onclick="selectAll()">全選</button>
+    <button class="btn btn-outline btn-sm" onclick="deselectAll()">取消全選</button>
+    <button class="btn btn-selected btn-sm" id="analyze-selected-btn" onclick="analyzeSelected()" disabled>分析已選取</button>
+    <button class="btn btn-outline btn-sm" onclick="exitSelectMode()">離開勾選</button>
   </div>
 
   <div id="progress-wrap"><div id="progress-bar"></div></div>
@@ -336,7 +301,7 @@ main::-webkit-scrollbar-thumb { background:var(--sand); border-radius:3px; }
     <div class="empty">
       <div class="empty-glyph">Gyn</div>
       <h2>尚無文獻</h2>
-      <p>設定左側搜尋條件，點「搜尋最新文獻」<br>系統從 PubMed 抓取後由 Gemini 2.5 Flash 深度評讀</p>
+      <p>設定左側搜尋條件，點「搜尋最新文獻」<br>系統從 PubMed 抓取後由 Gemini 深度評讀</p>
     </div>
   </div>
 </main>
@@ -347,47 +312,53 @@ main::-webkit-scrollbar-thumb { background:var(--sand); border-radius:3px; }
 const JOURNALS = ["New England Journal of Medicine","The Lancet","The Lancet Oncology","Journal of Clinical Oncology","Nature Medicine","Gynecologic Oncology","Journal of Gynecologic Oncology","Annals of Oncology","Cancer","JAMA Oncology"];
 
 let articles = [], analysisCache = {}, cartItems = [];
-let abortController = null, isAnalyzing = false;
+let abortFlag = false, isRunningBatch = false;
+let selectMode = false, selectedItems = new Set();
 
 const v = id => document.getElementById(id).value.trim();
+const el = id => document.getElementById(id);
 
-/* CONFIG */
+/* ── CONFIG ── */
 function saveConfig() {
   const cfg = {
-    geminiKey:v('gemini-key'), entrezEmail:v('entrez-email'),
-    ghOwner:v('gh-owner'), ghRepo:v('gh-repo'), ghToken:v('gh-token'),
+    geminiKey:v('gemini-key'), geminiModel:v('gemini-model'),
+    entrezEmail:v('entrez-email'), ghOwner:v('gh-owner'), ghRepo:v('gh-repo'),
+    ghBranch:v('gh-branch'), ghWorkflow:v('gh-workflow'), ghToken:v('gh-token'),
     customKeywords:v('custom-keywords'), daysBack:v('days-back'), maxResults:v('max-results'),
-    limitJournals:document.getElementById('limit-journals').checked,
+    limitJournals:el('limit-journals').checked,
     topics:[...document.querySelectorAll('#topic-toggles input')].map(i=>i.checked)
   };
-  localStorage.setItem('gynonc_v2', JSON.stringify(cfg));
+  localStorage.setItem('gynonc_v3', JSON.stringify(cfg));
   toast('設定已儲存','ok');
 }
 function loadConfig() {
   try {
-    const cfg = JSON.parse(localStorage.getItem('gynonc_v2') || localStorage.getItem('gynonc_cfg') || '{}');
-    const s = (id,val) => { if (val) document.getElementById(id).value = val; };
-    s('gemini-key',cfg.geminiKey); s('entrez-email',cfg.entrezEmail);
-    s('gh-owner',cfg.ghOwner); s('gh-repo',cfg.ghRepo); s('gh-token',cfg.ghToken);
+    const raw = localStorage.getItem('gynonc_v3') || localStorage.getItem('gynonc_v2') || localStorage.getItem('gynonc_cfg') || '{}';
+    const cfg = JSON.parse(raw);
+    const s = (id,val) => { if (val !== undefined && val !== null && val !== '') el(id).value = val; };
+    s('gemini-key',cfg.geminiKey); s('gemini-model',cfg.geminiModel);
+    s('entrez-email',cfg.entrezEmail); s('gh-owner',cfg.ghOwner);
+    s('gh-repo',cfg.ghRepo); s('gh-branch',cfg.ghBranch);
+    s('gh-workflow',cfg.ghWorkflow); s('gh-token',cfg.ghToken);
     s('custom-keywords',cfg.customKeywords); s('days-back',cfg.daysBack); s('max-results',cfg.maxResults);
-    if (cfg.limitJournals !== undefined) document.getElementById('limit-journals').checked = cfg.limitJournals;
+    if (cfg.limitJournals !== undefined) el('limit-journals').checked = cfg.limitJournals;
     if (cfg.topics) [...document.querySelectorAll('#topic-toggles input')].forEach((b,i) => { if (cfg.topics[i]!==undefined) b.checked=cfg.topics[i]; });
   } catch(e){}
 }
 
-/* QUERY */
+/* ── QUERY ── */
 function buildQuery() {
   const kw = [];
   document.querySelectorAll('#topic-toggles input:checked').forEach(c => c.value.split(',').forEach(k=>kw.push(k.trim())));
   v('custom-keywords').split(',').forEach(k=>{if(k.trim())kw.push(k.trim());});
   if (!kw.length) return null;
   let q = '('+kw.map(k=>`"${k}"[Title/Abstract]`).join(' OR ')+')';
-  if (document.getElementById('limit-journals').checked)
+  if (el('limit-journals').checked)
     q += ' AND ('+JOURNALS.map(j=>`"${j}"[Journal]`).join(' OR ')+')';
   return q;
 }
 
-/* PUBMED */
+/* ── PUBMED ── */
 async function fetchPubMed(query, days, max, email) {
   const base = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
   const sr = await fetch(`${base}esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&reldate=${days}&retmax=${max}&sort=date&retmode=json&email=${encodeURIComponent(email)}`);
@@ -400,65 +371,75 @@ async function fetchPubMed(query, days, max, email) {
     try {
       const title = art.querySelector('ArticleTitle')?.textContent||'';
       const journal = art.querySelector('Journal > Title')?.textContent||'';
-      const abstract = [...art.querySelectorAll('AbstractText')].map(a=>a.textContent).join(' ')||'No abstract.';
+      const abstract = [...art.querySelectorAll('AbstractText')].map(a=>a.textContent).join(' ')||'No abstract available.';
       const doi = art.querySelector('ArticleId[IdType="doi"]')?.textContent||'';
       const pmid = art.querySelector('ArticleId[IdType="pubmed"]')?.textContent||ids[idx];
       const link = doi?`https://doi.org/${doi}`:`https://pubmed.ncbi.nlm.nih.gov/${pmid}/`;
       const yr = art.querySelector('PubDate > Year')?.textContent||'';
       const mo = art.querySelector('PubDate > Month')?.textContent||'';
       return {pmid,title,journal,abstract,link,doi,date:`${mo} ${yr}`.trim(),titleZh:''};
-    } catch { return null; }
+    } catch{return null;}
   }).filter(Boolean);
 }
 
-/* TRANSLATE */
+/* ── TRANSLATE ── */
 async function translateTitle(title) {
   try {
     const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(title)}`);
     return (await r.json())[0].map(x=>x[0]).join('');
-  } catch { return ''; }
+  } catch{return '';}
 }
 
-/* GEMINI STREAM */
-async function streamAnalysis(art, apiKey, signal, onChunk) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`;
-  const prompt = `你是一位台灣頂尖婦科腫瘤科醫師。請閱讀以下英文摘要，用繁體中文（台灣用語）撰寫深度評讀報告。
+/* ── GEMINI (non-streaming, reliable) ── */
+async function callGemini(art) {
+  const apiKey = v('gemini-key');
+  const model = v('gemini-model') || 'gemini-2.0-flash';
+  if (!apiKey) throw new Error('請先輸入 Gemini API Key');
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const prompt = `你是一位台灣頂尖婦科腫瘤科醫師。請閱讀以下英文摘要，用繁體中文（台灣用語）撰寫完整深度評讀報告。
 
 標題：${art.title}
 期刊：${art.journal}
 摘要：${art.abstract}
 
-請依照以下五個區塊輸出，每個區塊以 ### 開頭，每區塊 3-5 條重點（以 • 開頭），數據務必呈現：
+請依照以下五個區塊輸出完整內容，每個區塊以 ### 開頭標題，每區塊 3-5 個條列重點（以 • 開頭），重要數據務必完整呈現：
 
 ### 🧪 研究設計與方法
 ### 💡 研究動機與背景
 ### 📊 重要數據與結果
 ### 🏥 臨床實務應用
-### ⭐ 對婦癌醫師的重要啟示`;
+### ⭐ 對婦癌醫師的重要啟示
+
+請確保每個區塊都有完整內容，不要截斷。`;
 
   const resp = await fetch(url, {
-    method:'POST', signal,
+    method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.3,maxOutputTokens:2000}})
+    body:JSON.stringify({
+      contents:[{parts:[{text:prompt}]}],
+      generationConfig:{temperature:0.3, maxOutputTokens:3000}
+    })
   });
-  if (!resp.ok) throw new Error(`API ${resp.status}`);
-  const reader = resp.body.getReader();
-  const dec = new TextDecoder();
-  let full = '';
-  while (true) {
-    const {done,value} = await reader.read();
-    if (done) break;
-    for (const line of dec.decode(value,{stream:true}).split('\n')) {
-      if (!line.startsWith('data: ')) continue;
-      const d = line.slice(6).trim();
-      if (d==='[DONE]') continue;
-      try { const t = JSON.parse(d).candidates?.[0]?.content?.parts?.[0]?.text||''; if(t){full+=t;onChunk(full);} } catch{}
-    }
+
+  if (!resp.ok) {
+    const errData = await resp.json().catch(()=>({}));
+    throw new Error(`API ${resp.status}: ${errData.error?.message || resp.statusText}`);
   }
-  return full;
+
+  const data = await resp.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!text) throw new Error('API 回傳空內容，請確認 API Key 和模型名稱');
+
+  // check if truncated due to maxTokens
+  const finishReason = data.candidates?.[0]?.finishReason;
+  if (finishReason === 'MAX_TOKENS') {
+    return text + '\n\n*（內容因 token 限制截斷）*';
+  }
+  return text;
 }
 
-/* RENDER MARKDOWN */
+/* ── RENDER MARKDOWN ── */
 function renderMd(text) {
   const sections = text.split(/(?=###\s)/);
   let html = '';
@@ -487,39 +468,44 @@ function renderMd(text) {
   return `<div class="analysis-body">${html}</div>`;
 }
 
-/* SEARCH */
+/* ── SEARCH ── */
 async function runSearch() {
-  const apiKey = v('gemini-key');
   const email = v('entrez-email') || 'gynonc@monitor.com';
   const query = buildQuery();
   if (!query) { toast('請至少選一個主題','err'); return; }
   setStatus('Searching PubMed…',true); setProgress(15);
-  document.getElementById('search-btn').disabled = true;
-  document.getElementById('results-container').innerHTML = '';
-  articles = []; analysisCache = {};
+  el('search-btn').disabled = true;
+  el('results-container').innerHTML = '';
+  articles = []; analysisCache = {}; cartItems = []; selectedItems.clear();
+  hideSelectUI();
+
   try {
     const raw = await fetchPubMed(query, v('days-back')||14, v('max-results')||20, email);
     setProgress(50);
     if (!raw.length) {
-      document.getElementById('results-container').innerHTML = '<div class="empty"><div class="empty-glyph">∅</div><h2>無結果</h2><p>本期間無符合條件的文章，請調整關鍵字或天數。</p></div>';
+      el('results-container').innerHTML = '<div class="empty"><div class="empty-glyph">∅</div><h2>無結果</h2><p>本期間無符合條件的文章，請調整關鍵字或延長天數。</p></div>';
       setStatus('No results'); setProgress(100,true); return;
     }
     setStatus(`翻譯 ${raw.length} 篇標題…`,true);
     articles = await Promise.all(raw.map(async a=>{a.titleZh=await translateTitle(a.title);return a;}));
     setProgress(90); renderArticles(); setProgress(100,true);
     setStatus(`找到 ${articles.length} 篇`,false);
-    const rc = document.getElementById('results-count');
-    rc.textContent=`${articles.length} 篇`; rc.style.display='';
+    el('results-count').textContent=`${articles.length} 篇`; el('results-count').style.display='';
+    el('analyze-all-btn').style.display='';
+    el('select-mode-btn').style.display='';
     toast(`找到 ${articles.length} 篇文章`,'ok');
   } catch(e) { toast(`搜尋失敗：${e.message}`,'err'); setStatus('Error'); setProgress(100,true); }
-  document.getElementById('search-btn').disabled = false;
+  el('search-btn').disabled = false;
 }
 
-/* RENDER ARTICLES */
+/* ── RENDER ARTICLES ── */
 function renderArticles() {
-  document.getElementById('results-container').innerHTML = articles.map((art,i)=>`
+  el('results-container').innerHTML = articles.map((art,i)=>`
     <div class="article-card" id="card-${i}">
       <div class="card-top">
+        <div class="card-check" id="check-wrap-${i}" style="display:none">
+          <input type="checkbox" id="chk-${i}" onchange="onCheckChange(${i})">
+        </div>
         <div class="card-num">${String(i+1).padStart(2,'0')}</div>
         <div class="card-body">
           <div class="card-en"><a href="${art.link}" target="_blank">${art.title}</a></div>
@@ -542,115 +528,216 @@ function renderArticles() {
     </div>`).join('');
 }
 
-/* TOGGLE ANALYSIS */
+/* ── INDIVIDUAL ANALYSIS ── */
 async function toggleAnalysis(idx) {
-  const wrap = document.getElementById(`awrap-${idx}`);
-  const inner = document.getElementById(`ainner-${idx}`);
-  const btn = document.getElementById(`abtn-${idx}`);
+  const wrap = el(`awrap-${idx}`);
+  const inner = el(`ainner-${idx}`);
+  const btn = el(`abtn-${idx}`);
 
   if (wrap.classList.contains('open')) {
     wrap.classList.remove('open'); btn.textContent='AI 評讀'; return;
   }
-  wrap.classList.add('open'); btn.textContent='收起';
+  wrap.classList.add('open');
 
-  if (analysisCache[idx]) { inner.innerHTML=renderMd(analysisCache[idx]); return; }
+  if (analysisCache[idx]) {
+    inner.innerHTML = renderMd(analysisCache[idx]); btn.textContent='收起'; return;
+  }
 
-  const apiKey = v('gemini-key');
-  if (!apiKey) { inner.innerHTML='<p style="padding:1rem;color:var(--danger)">請先輸入 Gemini API Key</p>'; return; }
+  if (!v('gemini-key')) {
+    inner.innerHTML='<p style="padding:1rem;color:var(--danger)">請先在左側輸入 Gemini API Key</p>';
+    btn.textContent='收起'; return;
+  }
 
-  inner.innerHTML=`<div class="thinking-box"><div class="dots"><span></span><span></span><span></span></div><div class="thinking-txt">Gemini 2.5 Flash 分析中…</div></div>`;
-
-  abortController = new AbortController();
-  btn.textContent='⏹ 停止';
-  const stopFn = () => { abortController.abort(); wrap.classList.remove('open'); btn.textContent='AI 評讀'; btn.onclick=()=>toggleAnalysis(idx); };
-  btn.onclick = stopFn;
+  btn.textContent='分析中…'; btn.disabled=true;
+  inner.innerHTML=`<div class="spinner-box">
+    <div class="spinner"></div>
+    <div><div class="spinner-txt">Gemini AI 評讀中，請稍候…</div>
+    <div class="spinner-sub">通常需要 10–20 秒</div></div>
+  </div>`;
 
   try {
-    const full = await streamAnalysis(articles[idx], apiKey, abortController.signal, partial=>{
-      inner.innerHTML = renderMd(partial)+'<span class="stream-cursor"></span>';
-    });
-    analysisCache[idx] = full;
-    inner.innerHTML = renderMd(full);
+    setStatus(`分析第 ${idx+1} 篇…`,true);
+    const text = await callGemini(articles[idx]);
+    analysisCache[idx] = text;
+    inner.innerHTML = renderMd(text);
     addToCartSilent(idx);
+    setStatus('Ready',false);
   } catch(e) {
-    if (e.name==='AbortError') inner.innerHTML='<p style="padding:1rem;color:var(--ink-muted)">分析已停止。</p>';
-    else { inner.innerHTML=`<p style="padding:1rem;color:var(--danger)">分析失敗：${e.message}</p>`; toast('分析失敗，請確認 API Key','err'); }
+    inner.innerHTML=`<p style="padding:1rem;color:var(--danger)">分析失敗：${e.message}</p>`;
+    toast(e.message,'err');
+    setStatus('Error',false);
   }
-  btn.textContent = wrap.classList.contains('open')?'收起':'AI 評讀';
-  btn.onclick = ()=>toggleAnalysis(idx);
+  btn.textContent='收起'; btn.disabled=false;
 }
 
-/* ANALYZE ALL */
+/* ── BATCH: ANALYZE ALL ── */
 async function analyzeAll() {
   if (!v('gemini-key')) { toast('請先輸入 Gemini API Key','err'); return; }
   if (!articles.length) { toast('請先搜尋文獻','err'); return; }
-  isAnalyzing = true;
-  document.getElementById('abort-btn').style.display='';
-  document.getElementById('analyze-all-btn').style.display='none';
+  startBatch();
   for (let i=0; i<articles.length; i++) {
-    if (!isAnalyzing) break;
-    if (!analysisCache[i]) {
-      document.getElementById(`awrap-${i}`).classList.add('open');
-      await toggleAnalysis(i);
-      await new Promise(r=>setTimeout(r,700));
-    }
+    if (abortFlag) break;
+    if (!analysisCache[i]) await runBatchItem(i, articles.length);
   }
-  isAnalyzing=false;
-  document.getElementById('abort-btn').style.display='none';
-  document.getElementById('analyze-all-btn').style.display='';
-  toast('全部分析完成','ok');
+  endBatch();
 }
 
-function abortAll() {
-  isAnalyzing=false;
-  if (abortController) abortController.abort();
-  document.getElementById('abort-btn').style.display='none';
-  document.getElementById('analyze-all-btn').style.display='';
-  toast('已停止分析');
+/* ── BATCH: ANALYZE SELECTED ── */
+async function analyzeSelected() {
+  if (!v('gemini-key')) { toast('請先輸入 Gemini API Key','err'); return; }
+  if (!selectedItems.size) { toast('請先勾選文章','err'); return; }
+  const targets = [...selectedItems].sort((a,b)=>a-b);
+  startBatch();
+  for (let i=0; i<targets.length; i++) {
+    if (abortFlag) break;
+    const idx = targets[i];
+    if (!analysisCache[idx]) await runBatchItem(idx, targets.length, i);
+  }
+  endBatch();
 }
 
-/* CART */
-function addToCartSilent(idx) { if(!cartItems.includes(idx)){cartItems.push(idx);updateCart();} }
-function addToCart(idx) { addToCartSilent(idx); toast(`已加入報告 (${cartItems.length} 篇)`,'ok'); }
-function clearCart() { cartItems=[]; updateCart(); toast('購物車已清空'); }
-function updateCart() {
-  const n=cartItems.length, el=document.getElementById('cart-count');
-  el.textContent=n; el.style.display=n>0?'inline-flex':'none';
-}
-
-/* GITHUB ACTIONS */
-async function triggerGitHubReport() {
-  const owner=v('gh-owner'), repo=v('gh-repo'), token=v('gh-token');
-  if (!owner||!repo||!token) { toast('請填寫 GitHub 帳號、Repo 和 Token','err'); return; }
-  setStatus('Triggering…',true);
+async function runBatchItem(idx, total, pos=null) {
+  const n = pos !== null ? pos+1 : idx+1;
+  setStatus(`分析 ${n}/${total}：第 ${idx+1} 篇…`, true);
+  const wrap = el(`awrap-${idx}`);
+  const inner = el(`ainner-${idx}`);
+  const btn = el(`abtn-${idx}`);
+  wrap.classList.add('open');
+  btn.textContent='分析中…'; btn.disabled=true;
+  inner.innerHTML=`<div class="analysis-progress">⏳ 批次分析中（${n}/${total}）…</div>
+    <div class="spinner-box"><div class="spinner"></div>
+    <div><div class="spinner-txt">Gemini AI 評讀中</div><div class="spinner-sub">通常需要 10–20 秒</div></div></div>`;
   try {
-    const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/weekly_report.yml/dispatches`,{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},
-      body:JSON.stringify({ref:'main',inputs:{days_back:v('days-back')||'7',max_results:v('max-results')||'10'}})
-    });
-    if (resp.status===204){toast('已觸發！約 2–3 分鐘後信件寄出 ✓','ok');setStatus('Actions triggered');}
-    else{const e=await resp.json();toast(`失敗：${e.message}`,'err');setStatus('Error');}
-  } catch(e){toast(`網路錯誤：${e.message}`,'err');setStatus('Error');}
+    const text = await callGemini(articles[idx]);
+    analysisCache[idx] = text;
+    inner.innerHTML = `<div class="analysis-progress">✓ 分析完成</div>` + renderMd(text);
+    addToCartSilent(idx);
+  } catch(e) {
+    inner.innerHTML=`<p style="padding:1rem;color:var(--danger)">分析失敗：${e.message}</p>`;
+  }
+  btn.textContent='收起'; btn.disabled=false;
+  // scroll into view gently
+  el(`card-${idx}`).scrollIntoView({behavior:'smooth',block:'nearest'});
+  await new Promise(r=>setTimeout(r,800)); // rate limiting
 }
 
-/* UTILS */
+function startBatch() {
+  abortFlag=false; isRunningBatch=true;
+  el('abort-btn').style.display='';
+  el('analyze-all-btn').style.display='none';
+  el('analyze-selected-btn').disabled=true;
+}
+function endBatch() {
+  isRunningBatch=false;
+  el('abort-btn').style.display='none';
+  el('analyze-all-btn').style.display='';
+  el('analyze-selected-btn').disabled=false;
+  setStatus('Ready',false);
+  if (!abortFlag) toast('分析完成','ok');
+  else toast('已停止');
+}
+function abortAll() {
+  abortFlag=true;
+}
+
+/* ── SELECT MODE ── */
+function toggleSelectMode() {
+  selectMode = !selectMode;
+  el('select-bar').classList.toggle('show', selectMode);
+  el('select-mode-btn').textContent = selectMode ? '✕ 退出勾選' : '☐ 勾選模式';
+  document.querySelectorAll('[id^="check-wrap-"]').forEach(w => w.style.display = selectMode ? 'block' : 'none');
+  if (!selectMode) { deselectAll(); }
+}
+function exitSelectMode() { selectMode=false; toggleSelectMode(); }
+
+function onCheckChange(idx) {
+  if (el(`chk-${idx}`).checked) {
+    selectedItems.add(idx);
+    el(`card-${idx}`).classList.add('selected');
+  } else {
+    selectedItems.delete(idx);
+    el(`card-${idx}`).classList.remove('selected');
+  }
+  el('sel-num').textContent = selectedItems.size;
+  el('analyze-selected-btn').disabled = selectedItems.size === 0;
+}
+function selectAll() {
+  articles.forEach((_,i)=>{ el(`chk-${i}`).checked=true; selectedItems.add(i); el(`card-${i}`).classList.add('selected'); });
+  el('sel-num').textContent=selectedItems.size;
+  el('analyze-selected-btn').disabled=false;
+}
+function deselectAll() {
+  articles.forEach((_,i)=>{ el(`chk-${i}`).checked=false; el(`card-${i}`).classList.remove('selected'); });
+  selectedItems.clear();
+  el('sel-num').textContent=0;
+  el('analyze-selected-btn').disabled=true;
+}
+function hideSelectUI() {
+  selectMode=false;
+  el('select-bar').classList.remove('show');
+  el('select-mode-btn').style.display='none';
+  el('analyze-all-btn').style.display='none';
+}
+
+/* ── CART ── */
+function addToCartSilent(idx){if(!cartItems.includes(idx)){cartItems.push(idx);updateCart();}}
+function addToCart(idx){addToCartSilent(idx);toast(`已加入報告 (${cartItems.length} 篇)`,'ok');}
+function clearCart(){cartItems=[];updateCart();toast('購物車已清空');}
+function updateCart(){const n=cartItems.length,e=el('cart-count');e.textContent=n;e.style.display=n>0?'inline-flex':'none';}
+
+/* ── GITHUB ACTIONS ── */
+async function triggerGitHubReport() {
+  const owner=v('gh-owner'), repo=v('gh-repo'), branch=v('gh-branch')||'main';
+  const workflow=v('gh-workflow')||'weekly_report.yml', token=v('gh-token');
+  if (!owner||!repo||!token) { toast('請填寫 GitHub 帳號、Repo 和 Token','err'); return; }
+
+  setStatus('Triggering GitHub Actions…',true);
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`;
+
+  try {
+    const resp = await fetch(url, {
+      method:'POST',
+      headers:{
+        'Authorization':`Bearer ${token}`,
+        'Accept':'application/vnd.github+json',
+        'X-GitHub-Api-Version':'2022-11-28',
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({ref:branch, inputs:{days_back:v('days-back')||'7',max_results:v('max-results')||'10'}})
+    });
+
+    if (resp.status===204) {
+      toast('已觸發！約 2–3 分鐘後信件寄出 ✓','ok');
+      setStatus('Actions triggered',false);
+    } else {
+      const err = await resp.json().catch(()=>({}));
+      const msg = err.message || `HTTP ${resp.status}`;
+      toast(`觸發失敗：${msg}`,'err');
+      // Diagnose common errors
+      if (resp.status===404) toast('404：請確認 Repo 名稱、分支名稱和 Workflow 檔名是否正確','err');
+      if (resp.status===401||resp.status===403) toast('403：Token 無效或缺少 workflow 權限','err');
+      setStatus('Error',false);
+    }
+  } catch(e) { toast(`網路錯誤：${e.message}`,'err'); setStatus('Error',false); }
+}
+
+/* ── UTILS ── */
 function setStatus(text,active=false){
-  document.getElementById('status-text').textContent=text;
-  document.getElementById('status-dot').style.background=active?'#e8b84b':'#52c78a';
+  el('status-text').textContent=text;
+  el('status-dot').style.background=active?'#e8b84b':'#52c78a';
 }
 function setProgress(pct,done=false){
-  const w=document.getElementById('progress-wrap'), b=document.getElementById('progress-bar');
+  const w=el('progress-wrap'),b=el('progress-bar');
   w.classList.add('on'); b.style.width=pct+'%';
   if(done) setTimeout(()=>{w.classList.remove('on');b.style.width='0%';},600);
 }
 let tt;
 function toast(msg,type=''){
-  const el=document.getElementById('toast');
-  el.textContent=msg; el.className='show'+(type?' '+type:'');
-  clearTimeout(tt); tt=setTimeout(()=>{el.className='';},3200);
+  const e=el('toast'); e.textContent=msg; e.className='show'+(type?' '+type:'');
+  clearTimeout(tt); tt=setTimeout(()=>{e.className='';},3800);
 }
-window.addEventListener('load',loadConfig);
+
+window.addEventListener('load', loadConfig);
 </script>
 </body>
 </html>

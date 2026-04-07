@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GynOnc Literature Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #1b2d42;
+    --navy-light: #243447;
+    --slate: #3a5068;
+    --accent: #c8a96e;
+    --accent-light: #e8d5b0;
+    --teal: #2a9d8f;
+    --teal-light: #52b5aa;
+    --text-primary: #e8eaf0;
+    --text-secondary: #9aaabf;
+    --text-muted: #5d7290;
+    --border: rgba(200,169,110,0.15);
+    --border-hover: rgba(200,169,110,0.35);
+    --surface: rgba(27,45,66,0.6);
+    --surface-raised: rgba(36,52,71,0.9);
+    --danger: #e05252;
+    --success: #52b788;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* === HEADER === */
+  header {
+    grid-column: 1 / -1;
+    padding: 1.2rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(13,27,42,0.95);
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo-mark {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--teal) 100%);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem; color: var(--navy); font-weight: bold; flex-shrink: 0;
+  }
+  .logo-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem; color: var(--text-primary); font-weight: 400; letter-spacing: 0.03em;
+  }
+  .logo-text p { font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 1px; }
+  .header-status { margin-left: auto; display: flex; align-items: center; gap: 0.8rem; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .status-text { font-size: 0.72rem; color: var(--text-muted); font-family: 'DM Mono', monospace; }
+
+  /* === SIDEBAR === */
+  aside {
+    padding: 1.5rem;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 1.2rem;
+    height: calc(100vh - 63px);
+    position: sticky; top: 63px;
+  }
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .panel-title {
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); font-family: 'DM Mono', monospace;
+    margin-bottom: 0.8rem; font-weight: 500;
+  }
+  label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
+  input[type=text], input[type=password], input[type=email], input[type=number], select, textarea {
+    width: 100%;
+    background: rgba(13,27,42,0.7);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    padding: 0.45rem 0.7rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 0.7rem;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+  select option { background: var(--navy-mid); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .toggle-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.7rem; }
+  .toggle-item {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem; color: var(--text-secondary);
+    cursor: pointer; padding: 0.25rem 0;
+  }
+  .toggle-item input[type=checkbox] { width: auto; margin: 0; accent-color: var(--accent); }
+  .toggle-item.active { color: var(--accent-light); }
+
+  /* === BUTTONS === */
+  .btn {
+    width: 100%; padding: 0.65rem;
+    border-radius: 7px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    transition: all 0.2s; letter-spacing: 0.03em;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #b8934e 100%);
+    color: var(--navy);
+  }
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-ghost {
+    background: transparent; color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border-hover); color: var(--text-primary); }
+  .btn-teal {
+    background: var(--teal); color: white;
+  }
+  .btn-teal:hover { background: var(--teal-light); }
+  .btn-sm { width: auto; padding: 0.3rem 0.7rem; font-size: 0.75rem; }
+  .divider { height: 1px; background: var(--border); margin: 0.3rem 0; }
+
+  /* === MAIN CONTENT === */
+  main { padding: 1.5rem 2rem; overflow-y: auto; height: calc(100vh - 63px); }
+  .main-toolbar {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .results-count {
+    font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--text-muted);
+    margin-left: auto;
+  }
+  #loading-bar {
+    display: none; width: 100%; height: 2px;
+    background: var(--border); border-radius: 1px; margin-bottom: 1rem; overflow: hidden;
+  }
+  #loading-bar.active { display: block; }
+  .loading-fill {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--teal));
+    border-radius: 1px; transition: width 0.4s ease;
+    animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer { 0%{opacity:0.6}50%{opacity:1}100%{opacity:0.6} }
+
+  /* === ARTICLE CARDS === */
+  .article-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .article-card:hover { border-color: var(--border-hover); }
+  .card-header { padding: 1rem 1.2rem 0.8rem; display: flex; gap: 1rem; align-items: flex-start; }
+  .card-num {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    color: var(--accent); min-width: 24px; padding-top: 3px;
+  }
+  .card-meta { flex: 1; }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 0.95rem; line-height: 1.4;
+    color: var(--text-primary); margin-bottom: 0.3rem;
+  }
+  .card-title a { color: inherit; text-decoration: none; }
+  .card-title a:hover { color: var(--accent-light); }
+  .card-title-zh {
+    font-size: 0.82rem; color: var(--accent-light);
+    font-weight: 400; margin-bottom: 0.4rem; line-height: 1.4;
+  }
+  .card-journal {
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+  .card-actions { padding: 0 1.2rem 0.8rem; display: flex; gap: 0.5rem; align-items: center; }
+  .badge {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    padding: 2px 8px; border-radius: 4px;
+    background: rgba(200,169,110,0.1); color: var(--accent);
+    border: 1px solid rgba(200,169,110,0.2);
+  }
+  .card-analysis {
+    border-top: 1px solid var(--border);
+    padding: 1rem 1.2rem;
+    display: none;
+  }
+  .card-analysis.visible { display: block; }
+  .analysis-content { font-size: 0.82rem; line-height: 1.7; color: var(--text-secondary); }
+  .analysis-content h3 {
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em;
+    margin: 0.9rem 0 0.35rem; font-weight: 500;
+  }
+  .analysis-content h3:first-child { margin-top: 0; }
+  .analysis-content p { margin-bottom: 0.4rem; }
+
+  /* === CART BADGE === */
+  .cart-indicator {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent); color: var(--navy);
+    font-size: 0.65rem; font-weight: 700;
+    margin-left: 0.4rem;
+  }
+
+  /* === TOAST === */
+  #toast {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+    background: var(--surface-raised); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.8rem 1.2rem;
+    font-size: 0.82rem; color: var(--text-secondary);
+    transform: translateY(10px); opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+    max-width: 320px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { border-color: var(--success); color: var(--success); }
+  #toast.error { border-color: var(--danger); color: var(--danger); }
+
+  /* === EMPTY STATE === */
+  .empty-state {
+    text-align: center; padding: 5rem 2rem;
+    color: var(--text-muted);
+  }
+  .empty-state .icon {
+    font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;
+    font-family: 'DM Serif Display', serif;
+  }
+  .empty-state p { font-size: 0.85rem; line-height: 1.7; }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">G</div>
+  <div class="logo-text">
+    <h1>GynOnc Literature Monitor</h1>
+    <p>Automated PubMed Intelligence · Powered by Gemini</p>
+  </div>
+  <div class="header-status">
+    <div class="status-dot"></div>
+    <span class="status-text" id="status-text">Ready</span>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside>
+
+  <!-- API Keys -->
+  <div class="panel">
+    <div class="panel-title">API Configuration</div>
+    <label>Gemini API Key</label>
+    <input type="password" id="gemini-key" placeholder="AIza..." />
+    <label>Entrez Email</label>
+    <input type="email" id="entrez-email" placeholder="your@email.com" />
+  </div>
+
+  <!-- Search Config -->
+  <div class="panel">
+    <div class="panel-title">Search Parameters</div>
+    <label>主題類別</label>
+    <div class="toggle-group" id="topic-toggles">
+      <label class="toggle-item active">
+        <input type="checkbox" value="cervical cancer,ovarian cancer,endometrial cancer" checked> 婦癌核心
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" value="immunotherapy gynecologic"> 免疫治療
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" value="robotic surgery minimally invasive gynecology"> 微創機器人
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" value="HIFU high intensity focused ultrasound uterine"> 海扶刀 HIFU
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" value="neoadjuvant chemotherapy cervical"> 術前輔助治療
+      </label>
+      <label class="toggle-item">
+        <input type="checkbox" value="HIPEC ovarian cancer peritoneal"> HIPEC / 熱灌注
+      </label>
+    </div>
+    <label>自訂關鍵字（逗號分隔）</label>
+    <input type="text" id="custom-keywords" placeholder="e.g. miRNA, TP53, BRCA" />
+
+    <div class="divider"></div>
+
+    <label>限定優質期刊</label>
+    <div class="toggle-group">
+      <label class="toggle-item active">
+        <input type="checkbox" id="limit-journals" checked> 只搜頂尖期刊
+      </label>
+    </div>
+
+    <div class="divider"></div>
+
+    <label>搜尋期間</label>
+    <div class="field-row">
+      <div>
+        <label>最近幾天</label>
+        <input type="number" id="days-back" value="14" min="1" max="365" />
+      </div>
+      <div>
+        <label>篇數上限</label>
+        <input type="number" id="max-results" value="20" min="1" max="100" />
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="search-btn" onclick="runSearch()">
+      搜尋最新文獻
+    </button>
+  </div>
+
+  <!-- Email Report -->
+  <div class="panel">
+    <div class="panel-title">
+      Email Report
+      <span class="cart-indicator" id="cart-count" style="display:none">0</span>
+    </div>
+    <label>收件人 Email</label>
+    <input type="email" id="report-email" placeholder="doctor@hospital.com" />
+    <label>EmailJS Service ID</label>
+    <input type="text" id="emailjs-service" placeholder="service_xxxxxxx" />
+    <label>EmailJS Template ID</label>
+    <input type="text" id="emailjs-template" placeholder="template_xxxxxxx" />
+    <label>EmailJS Public Key</label>
+    <input type="text" id="emailjs-pubkey" placeholder="xxxxxxxxxxxxxxx" />
+    <button class="btn btn-ghost" id="send-report-btn" onclick="sendEmailReport()" style="margin-top:0.3rem">
+      寄出選取報告
+      <span class="cart-indicator" id="cart-count2" style="display:none">0</span>
+    </button>
+    <p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem;line-height:1.5">
+      需 EmailJS 免費帳號。或用 GitHub Actions 自動排程（見 README）。
+    </p>
+  </div>
+
+  <!-- Save Config -->
+  <div style="display:flex;gap:0.5rem">
+    <button class="btn btn-ghost btn-sm" style="flex:1" onclick="saveConfig()">儲存設定</button>
+    <button class="btn btn-ghost btn-sm" style="flex:1" onclick="loadConfig()">讀取設定</button>
+  </div>
+
+</aside>
+
+<!-- MAIN -->
+<main>
+  <div class="main-toolbar">
+    <span style="font-size:0.82rem;color:var(--text-secondary)">文獻列表</span>
+    <span class="results-count" id="results-count"></span>
+    <button class="btn btn-ghost btn-sm" onclick="clearCart()" style="margin-left:auto">清空購物車</button>
+    <button class="btn btn-teal btn-sm" onclick="analyzeAll()">全部 AI 分析</button>
+  </div>
+
+  <div id="loading-bar"><div class="loading-fill" id="loading-fill"></div></div>
+
+  <div id="results-container">
+    <div class="empty-state">
+      <div class="icon">🔬</div>
+      <p>設定左側搜尋條件後，點擊「搜尋最新文獻」<br>系統會自動從 PubMed 抓取文章，並由 Gemini AI 進行深度評讀。</p>
+    </div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+const PRESET_JOURNALS = [
+  "New England Journal of Medicine","The Lancet","The Lancet Oncology",
+  "Journal of Clinical Oncology","Nature Medicine","Gynecologic Oncology",
+  "Journal of Gynecologic Oncology","Annals of Oncology","Cancer","JAMA Oncology"
+];
+
+let articlesData = [];
+let analysisCache = {};
+let cartItems = [];
+
+/* ===== CONFIG PERSISTENCE ===== */
+function saveConfig() {
+  const cfg = {
+    geminiKey: document.getElementById('gemini-key').value,
+    entrezEmail: document.getElementById('entrez-email').value,
+    reportEmail: document.getElementById('report-email').value,
+    emailjsService: document.getElementById('emailjs-service').value,
+    emailjsTemplate: document.getElementById('emailjs-template').value,
+    emailjsPubkey: document.getElementById('emailjs-pubkey').value,
+    customKeywords: document.getElementById('custom-keywords').value,
+    daysBack: document.getElementById('days-back').value,
+    maxResults: document.getElementById('max-results').value,
+    limitJournals: document.getElementById('limit-journals').checked,
+    topics: Array.from(document.querySelectorAll('#topic-toggles input')).map(i=>i.checked)
+  };
+  localStorage.setItem('gynonc_cfg', JSON.stringify(cfg));
+  showToast('設定已儲存', 'success');
+}
+
+function loadConfig() {
+  try {
+    const cfg = JSON.parse(localStorage.getItem('gynonc_cfg') || '{}');
+    if (cfg.geminiKey) document.getElementById('gemini-key').value = cfg.geminiKey;
+    if (cfg.entrezEmail) document.getElementById('entrez-email').value = cfg.entrezEmail;
+    if (cfg.reportEmail) document.getElementById('report-email').value = cfg.reportEmail;
+    if (cfg.emailjsService) document.getElementById('emailjs-service').value = cfg.emailjsService;
+    if (cfg.emailjsTemplate) document.getElementById('emailjs-template').value = cfg.emailjsTemplate;
+    if (cfg.emailjsPubkey) document.getElementById('emailjs-pubkey').value = cfg.emailjsPubkey;
+    if (cfg.customKeywords) document.getElementById('custom-keywords').value = cfg.customKeywords;
+    if (cfg.daysBack) document.getElementById('days-back').value = cfg.daysBack;
+    if (cfg.maxResults) document.getElementById('max-results').value = cfg.maxResults;
+    if (cfg.limitJournals !== undefined) document.getElementById('limit-journals').checked = cfg.limitJournals;
+    if (cfg.topics) {
+      const boxes = document.querySelectorAll('#topic-toggles input');
+      cfg.topics.forEach((v,i) => { if(boxes[i]) boxes[i].checked = v; });
+    }
+    showToast('設定已讀取', 'success');
+  } catch(e) { showToast('讀取失敗', 'error'); }
+}
+
+/* ===== BUILD QUERY ===== */
+function buildQuery() {
+  const keywords = [];
+  document.querySelectorAll('#topic-toggles input:checked').forEach(cb => {
+    cb.value.split(',').forEach(k => keywords.push(k.trim()));
+  });
+  const custom = document.getElementById('custom-keywords').value;
+  if (custom) custom.split(',').forEach(k => { if(k.trim()) keywords.push(k.trim()); });
+
+  if (!keywords.length) return null;
+
+  const termQ = '(' + keywords.map(k => `"${k}"[Title/Abstract]`).join(' OR ') + ')';
+  const days = document.getElementById('days-back').value;
+  const limitJ = document.getElementById('limit-journals').checked;
+
+  let q = termQ;
+  if (limitJ) {
+    const jQ = '(' + PRESET_JOURNALS.map(j => `"${j}"[Journal]`).join(' OR ') + ')';
+    q = `${termQ} AND ${jQ}`;
+  }
+  return { query: q, reldate: days };
+}
+
+/* ===== PUBMED FETCH ===== */
+async function fetchPubMed(query, reldate, maxResults, email) {
+  const base = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/';
+  const searchUrl = `${base}esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&reldate=${reldate}&retmax=${maxResults}&sort=date&retmode=json&email=${encodeURIComponent(email)}`;
+
+  const searchResp = await fetch(searchUrl);
+  const searchData = await searchResp.json();
+  const ids = searchData.esearchresult?.idlist || [];
+  if (!ids.length) return [];
+
+  const fetchUrl = `${base}efetch.fcgi?db=pubmed&id=${ids.join(',')}&retmode=xml&email=${encodeURIComponent(email)}`;
+  const fetchResp = await fetch(fetchUrl);
+  const xmlText = await fetchResp.text();
+
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(xmlText, 'text/xml');
+  const articles = [];
+
+  xml.querySelectorAll('PubmedArticle').forEach((art, idx) => {
+    try {
+      const title = art.querySelector('ArticleTitle')?.textContent || '';
+      const journal = art.querySelector('Journal > Title')?.textContent || '';
+      const abstractTexts = art.querySelectorAll('AbstractText');
+      const abstract = Array.from(abstractTexts).map(a => a.textContent).join(' ') || 'No abstract available.';
+      const doi = art.querySelector('ArticleId[IdType="doi"]')?.textContent || '';
+      const pmid = art.querySelector('ArticleId[IdType="pubmed"]')?.textContent || ids[idx];
+      const link = doi ? `https://doi.org/${doi}` : `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`;
+      const year = art.querySelector('PubDate > Year')?.textContent || '';
+      const month = art.querySelector('PubDate > Month')?.textContent || '';
+      articles.push({ pmid, title, journal, abstract, link, doi, date: `${month} ${year}`.trim() });
+    } catch(e) {}
+  });
+  return articles;
+}
+
+/* ===== GOOGLE TRANSLATE (free API) ===== */
+async function translateTitle(title) {
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-TW&dt=t&q=${encodeURIComponent(title)}`;
+    const r = await fetch(url);
+    const d = await r.json();
+    return d[0].map(x=>x[0]).join('');
+  } catch { return title; }
+}
+
+/* ===== GEMINI ANALYSIS ===== */
+async function analyzeArticle(art, apiKey) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const prompt = `
+你是一位頂尖的婦科腫瘤科醫師。請閱讀以下英文摘要，用繁體中文（台灣）撰寫深度評讀報告。
+
+標題：${art.title}
+期刊：${art.journal}
+摘要：${art.abstract}
+
+請依照以下結構輸出，使用 ### 作為各節標題：
+
+### 🧪 研究設計與方法
+### 💡 研究動機與背景
+### 📊 重要數據與結果
+### 🏥 臨床實務應用
+### ⭐ 對婦癌醫師的重要啟示
+
+每節請以 2-4 個條列式重點呈現，使用 • 符號開頭，語言需專業且精練。
+`;
+  const body = {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { temperature: 0.3, maxOutputTokens: 1200 }
+  };
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!resp.ok) throw new Error(`Gemini API error: ${resp.status}`);
+  const data = await resp.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '分析失敗';
+}
+
+/* ===== RENDER ANALYSIS ===== */
+function renderAnalysis(text) {
+  let html = text
+    .replace(/### (.*)/g, '<h3>$1</h3>')
+    .replace(/• (.*)/g, '<p>• $1</p>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '<br>');
+  return `<div class="analysis-content">${html}</div>`;
+}
+
+/* ===== MAIN SEARCH ===== */
+async function runSearch() {
+  const apiKey = document.getElementById('gemini-key').value.trim();
+  const email = document.getElementById('entrez-email').value.trim() || 'gynonc@monitor.com';
+  const maxResults = document.getElementById('max-results').value;
+
+  const qData = buildQuery();
+  if (!qData) { showToast('請至少選擇一個主題關鍵字', 'error'); return; }
+
+  setStatus('Searching PubMed...');
+  setLoading(true, 20);
+  document.getElementById('search-btn').disabled = true;
+  document.getElementById('results-container').innerHTML = '';
+  articlesData = [];
+
+  try {
+    const articles = await fetchPubMed(qData.query, qData.reldate, maxResults, email);
+    setLoading(true, 50);
+
+    if (!articles.length) {
+      document.getElementById('results-container').innerHTML = '<div class="empty-state"><div class="icon">🔍</div><p>本期間內無符合條件的文章。<br>請嘗試調整關鍵字或延長搜尋天數。</p></div>';
+      setLoading(false);
+      setStatus('No results');
+      return;
+    }
+
+    setStatus(`Translating ${articles.length} titles...`);
+
+    // Translate all titles in parallel
+    const translated = await Promise.all(articles.map(async (art) => {
+      art.titleZh = await translateTitle(art.title);
+      return art;
+    }));
+    articlesData = translated;
+    setLoading(true, 80);
+
+    renderArticles(articlesData);
+    setLoading(false);
+    setStatus(`${articles.length} articles found`);
+    document.getElementById('results-count').textContent = `${articles.length} 篇`;
+    showToast(`找到 ${articles.length} 篇文章`, 'success');
+
+  } catch(e) {
+    showToast(`搜尋失敗：${e.message}`, 'error');
+    setStatus('Error');
+    setLoading(false);
+  }
+  document.getElementById('search-btn').disabled = false;
+}
+
+/* ===== RENDER ARTICLES ===== */
+function renderArticles(articles) {
+  const container = document.getElementById('results-container');
+  container.innerHTML = articles.map((art, i) => `
+    <div class="article-card" id="card-${i}">
+      <div class="card-header">
+        <span class="card-num">${String(i+1).padStart(2,'0')}</span>
+        <div class="card-meta">
+          <div class="card-title"><a href="${art.link}" target="_blank">${art.title}</a></div>
+          <div class="card-title-zh">${art.titleZh || '翻譯中...'}</div>
+          <div class="card-journal">📖 ${art.journal} ${art.date ? '· ' + art.date : ''}</div>
+        </div>
+      </div>
+      <div class="card-actions">
+        <span class="badge">${art.pmid}</span>
+        ${art.doi ? `<span class="badge">DOI</span>` : ''}
+        <button class="btn btn-ghost btn-sm" onclick="toggleAnalysis(${i})" id="analyze-btn-${i}">
+          AI 評讀
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="addToCart(${i})" id="cart-btn-${i}">
+          + 加入報告
+        </button>
+      </div>
+      <div class="card-analysis" id="analysis-${i}"></div>
+    </div>
+  `).join('');
+}
+
+/* ===== TOGGLE / ANALYZE ===== */
+async function toggleAnalysis(idx) {
+  const panel = document.getElementById(`analysis-${idx}`);
+  const btn = document.getElementById(`analyze-btn-${idx}`);
+
+  if (panel.classList.contains('visible')) {
+    panel.classList.remove('visible');
+    btn.textContent = 'AI 評讀';
+    return;
+  }
+
+  const apiKey = document.getElementById('gemini-key').value.trim();
+  if (!apiKey) { showToast('請先輸入 Gemini API Key', 'error'); return; }
+
+  if (analysisCache[idx]) {
+    panel.innerHTML = renderAnalysis(analysisCache[idx]);
+    panel.classList.add('visible');
+    btn.textContent = '收起';
+    return;
+  }
+
+  btn.textContent = '分析中...';
+  btn.disabled = true;
+  setStatus(`Analyzing article ${idx+1}...`);
+
+  try {
+    const result = await analyzeArticle(articlesData[idx], apiKey);
+    analysisCache[idx] = result;
+    panel.innerHTML = renderAnalysis(result);
+    panel.classList.add('visible');
+    btn.textContent = '收起';
+    addToCartSilent(idx);
+  } catch(e) {
+    panel.innerHTML = `<div class="analysis-content"><p style="color:var(--danger)">分析失敗：${e.message}</p></div>`;
+    panel.classList.add('visible');
+    btn.textContent = 'AI 評讀';
+    showToast('AI 分析失敗，請確認 API Key', 'error');
+  }
+  btn.disabled = false;
+  setStatus('Ready');
+}
+
+async function analyzeAll() {
+  const apiKey = document.getElementById('gemini-key').value.trim();
+  if (!apiKey) { showToast('請先輸入 Gemini API Key', 'error'); return; }
+  if (!articlesData.length) { showToast('請先搜尋文獻', 'error'); return; }
+
+  for (let i = 0; i < articlesData.length; i++) {
+    if (!analysisCache[i]) {
+      await toggleAnalysis(i);
+      await new Promise(r => setTimeout(r, 800)); // rate limit
+    }
+  }
+  showToast('全部分析完成', 'success');
+}
+
+/* ===== CART ===== */
+function addToCartSilent(idx) {
+  if (!cartItems.includes(idx)) {
+    cartItems.push(idx);
+    updateCartBadge();
+  }
+}
+
+function addToCart(idx) {
+  addToCartSilent(idx);
+  showToast(`已加入報告購物車 (${cartItems.length} 篇)`, 'success');
+}
+
+function clearCart() {
+  cartItems = [];
+  updateCartBadge();
+  showToast('購物車已清空');
+}
+
+function updateCartBadge() {
+  const n = cartItems.length;
+  ['cart-count','cart-count2'].forEach(id => {
+    const el = document.getElementById(id);
+    el.textContent = n;
+    el.style.display = n > 0 ? 'inline-flex' : 'none';
+  });
+}
+
+/* ===== EMAIL REPORT ===== */
+async function sendEmailReport() {
+  const toEmail = document.getElementById('report-email').value.trim();
+  const serviceId = document.getElementById('emailjs-service').value.trim();
+  const templateId = document.getElementById('emailjs-template').value.trim();
+  const pubKey = document.getElementById('emailjs-pubkey').value.trim();
+
+  if (!toEmail || !serviceId || !templateId || !pubKey) {
+    showToast('請填寫完整的 Email 及 EmailJS 設定', 'error'); return;
+  }
+  if (!cartItems.length) {
+    showToast('購物車是空的，請先分析文章', 'error'); return;
+  }
+
+  setStatus('Sending email...');
+
+  let reportHtml = `<h2>GynOnc 文獻評讀報告</h2><p>報告日期：${new Date().toLocaleDateString('zh-TW')}</p><hr>`;
+  cartItems.forEach(idx => {
+    const art = articlesData[idx];
+    const analysis = analysisCache[idx] || '（尚未分析）';
+    reportHtml += `
+      <h3><a href="${art.link}">${art.title}</a></h3>
+      <p><em>${art.titleZh}</em></p>
+      <p>📖 ${art.journal}</p>
+      <div style="white-space:pre-line;background:#f5f5f5;padding:12px;border-radius:6px;margin:8px 0;">${analysis}</div>
+      <hr>`;
+  });
+
+  try {
+    emailjs.init(pubKey);
+    await emailjs.send(serviceId, templateId, {
+      to_email: toEmail,
+      subject: `GynOnc 文獻報告 ${new Date().toLocaleDateString('zh-TW')}`,
+      html_content: reportHtml,
+      article_count: cartItems.length
+    });
+    showToast('報告已成功寄出！', 'success');
+    setStatus('Email sent');
+  } catch(e) {
+    showToast(`Email 發送失敗：${e.text || e.message}`, 'error');
+    setStatus('Email failed');
+  }
+}
+
+/* ===== UTILS ===== */
+function setLoading(active, pct = 0) {
+  const bar = document.getElementById('loading-bar');
+  const fill = document.getElementById('loading-fill');
+  bar.classList.toggle('active', active);
+  if (active) fill.style.width = pct + '%';
+  else { fill.style.width = '100%'; setTimeout(() => { bar.classList.remove('active'); fill.style.width = '0%'; }, 400); }
+}
+
+function setStatus(text) {
+  document.getElementById('status-text').textContent = text;
+}
+
+let toastTimer;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+// Auto-load config on startup
+window.addEventListener('load', () => { loadConfig(); });
+</script>
+</body>
+</html>

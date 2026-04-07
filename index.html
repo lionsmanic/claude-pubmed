@@ -335,26 +335,25 @@
     </button>
   </div>
 
-  <!-- Email Report -->
+  <!-- Email Report via GitHub Actions -->
   <div class="panel">
     <div class="panel-title">
-      Email Report
+      立即寄送報告
       <span class="cart-indicator" id="cart-count" style="display:none">0</span>
     </div>
-    <label>收件人 Email</label>
-    <input type="email" id="report-email" placeholder="doctor@hospital.com" />
-    <label>EmailJS Service ID</label>
-    <input type="text" id="emailjs-service" placeholder="service_xxxxxxx" />
-    <label>EmailJS Template ID</label>
-    <input type="text" id="emailjs-template" placeholder="template_xxxxxxx" />
-    <label>EmailJS Public Key</label>
-    <input type="text" id="emailjs-pubkey" placeholder="xxxxxxxxxxxxxxx" />
-    <button class="btn btn-ghost" id="send-report-btn" onclick="sendEmailReport()" style="margin-top:0.3rem">
-      寄出選取報告
+    <label>GitHub 帳號名稱</label>
+    <input type="text" id="gh-owner" placeholder="e.g. lionsmanic" />
+    <label>Repository 名稱</label>
+    <input type="text" id="gh-repo" placeholder="e.g. gynonc-monitor" />
+    <label>GitHub Personal Access Token</label>
+    <input type="password" id="gh-token" placeholder="github_pat_..." />
+    <button class="btn btn-teal" onclick="triggerGitHubReport()" style="margin-top:0.3rem">
+      觸發 Actions 寄信
       <span class="cart-indicator" id="cart-count2" style="display:none">0</span>
     </button>
-    <p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.5rem;line-height:1.5">
-      需 EmailJS 免費帳號。或用 GitHub Actions 自動排程（見 README）。
+    <p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.6rem;line-height:1.6">
+      點擊後約 2–3 分鐘信件寄出。<br>
+      Token 需有 <code style="font-size:0.68rem;color:var(--accent)">Actions: write</code> 權限。
     </p>
   </div>
 
@@ -387,7 +386,6 @@
 
 <div id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 const PRESET_JOURNALS = [
   "New England Journal of Medicine","The Lancet","The Lancet Oncology",
@@ -404,10 +402,9 @@ function saveConfig() {
   const cfg = {
     geminiKey: document.getElementById('gemini-key').value,
     entrezEmail: document.getElementById('entrez-email').value,
-    reportEmail: document.getElementById('report-email').value,
-    emailjsService: document.getElementById('emailjs-service').value,
-    emailjsTemplate: document.getElementById('emailjs-template').value,
-    emailjsPubkey: document.getElementById('emailjs-pubkey').value,
+    ghOwner: document.getElementById('gh-owner').value,
+    ghRepo: document.getElementById('gh-repo').value,
+    ghToken: document.getElementById('gh-token').value,
     customKeywords: document.getElementById('custom-keywords').value,
     daysBack: document.getElementById('days-back').value,
     maxResults: document.getElementById('max-results').value,
@@ -423,10 +420,9 @@ function loadConfig() {
     const cfg = JSON.parse(localStorage.getItem('gynonc_cfg') || '{}');
     if (cfg.geminiKey) document.getElementById('gemini-key').value = cfg.geminiKey;
     if (cfg.entrezEmail) document.getElementById('entrez-email').value = cfg.entrezEmail;
-    if (cfg.reportEmail) document.getElementById('report-email').value = cfg.reportEmail;
-    if (cfg.emailjsService) document.getElementById('emailjs-service').value = cfg.emailjsService;
-    if (cfg.emailjsTemplate) document.getElementById('emailjs-template').value = cfg.emailjsTemplate;
-    if (cfg.emailjsPubkey) document.getElementById('emailjs-pubkey').value = cfg.emailjsPubkey;
+    if (cfg.ghOwner) document.getElementById('gh-owner').value = cfg.ghOwner;
+    if (cfg.ghRepo) document.getElementById('gh-repo').value = cfg.ghRepo;
+    if (cfg.ghToken) document.getElementById('gh-token').value = cfg.ghToken;
     if (cfg.customKeywords) document.getElementById('custom-keywords').value = cfg.customKeywords;
     if (cfg.daysBack) document.getElementById('days-back').value = cfg.daysBack;
     if (cfg.maxResults) document.getElementById('max-results').value = cfg.maxResults;
@@ -509,7 +505,7 @@ async function translateTitle(title) {
 
 /* ===== GEMINI ANALYSIS ===== */
 async function analyzeArticle(art, apiKey) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   const prompt = `
 你是一位頂尖的婦科腫瘤科醫師。請閱讀以下英文摘要，用繁體中文（台灣）撰寫深度評讀報告。
 
@@ -714,47 +710,48 @@ function updateCartBadge() {
   });
 }
 
-/* ===== EMAIL REPORT ===== */
-async function sendEmailReport() {
-  const toEmail = document.getElementById('report-email').value.trim();
-  const serviceId = document.getElementById('emailjs-service').value.trim();
-  const templateId = document.getElementById('emailjs-template').value.trim();
-  const pubKey = document.getElementById('emailjs-pubkey').value.trim();
+/* ===== TRIGGER GITHUB ACTIONS ===== */
+async function triggerGitHubReport() {
+  const owner = document.getElementById('gh-owner').value.trim();
+  const repo  = document.getElementById('gh-repo').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
 
-  if (!toEmail || !serviceId || !templateId || !pubKey) {
-    showToast('請填寫完整的 Email 及 EmailJS 設定', 'error'); return;
-  }
-  if (!cartItems.length) {
-    showToast('購物車是空的，請先分析文章', 'error'); return;
+  if (!owner || !repo || !token) {
+    showToast('請填寫 GitHub 帳號、Repo 名稱和 Token', 'error'); return;
   }
 
-  setStatus('Sending email...');
-
-  let reportHtml = `<h2>GynOnc 文獻評讀報告</h2><p>報告日期：${new Date().toLocaleDateString('zh-TW')}</p><hr>`;
-  cartItems.forEach(idx => {
-    const art = articlesData[idx];
-    const analysis = analysisCache[idx] || '（尚未分析）';
-    reportHtml += `
-      <h3><a href="${art.link}">${art.title}</a></h3>
-      <p><em>${art.titleZh}</em></p>
-      <p>📖 ${art.journal}</p>
-      <div style="white-space:pre-line;background:#f5f5f5;padding:12px;border-radius:6px;margin:8px 0;">${analysis}</div>
-      <hr>`;
-  });
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/weekly_report.yml/dispatches`;
+  setStatus('Triggering GitHub Actions...');
 
   try {
-    emailjs.init(pubKey);
-    await emailjs.send(serviceId, templateId, {
-      to_email: toEmail,
-      subject: `GynOnc 文獻報告 ${new Date().toLocaleDateString('zh-TW')}`,
-      html_content: reportHtml,
-      article_count: cartItems.length
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ref: 'main',
+        inputs: {
+          days_back: document.getElementById('days-back').value,
+          max_results: document.getElementById('max-results').value
+        }
+      })
     });
-    showToast('報告已成功寄出！', 'success');
-    setStatus('Email sent');
+
+    if (resp.status === 204) {
+      showToast('已觸發！約 2–3 分鐘後信件寄出 ✓', 'success');
+      setStatus('Actions triggered');
+    } else {
+      const err = await resp.json();
+      showToast(`失敗：${err.message}`, 'error');
+      setStatus('Trigger failed');
+    }
   } catch(e) {
-    showToast(`Email 發送失敗：${e.text || e.message}`, 'error');
-    setStatus('Email failed');
+    showToast(`網路錯誤：${e.message}`, 'error');
+    setStatus('Error');
   }
 }
 

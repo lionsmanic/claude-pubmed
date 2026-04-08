@@ -579,7 +579,9 @@ async function runSearch() {
     setProgress(50);
     if (!raw.length) {
       el('results-container').innerHTML = '<div class="empty"><div class="empty-glyph">∅</div><h2>無結果</h2><p>本期間無符合條件的文章，請調整關鍵字或延長天數。</p></div>';
-      setStatus('No results'); setProgress(100,true); return;
+      setStatus('No results'); setProgress(100,true);
+      el('search-btn').disabled = false;
+      return;
     }
     setStatus(`翻譯 ${raw.length} 篇標題…`,true);
     articles = await Promise.all(raw.map(async a=>{a.titleZh=await translateTitle(a.title);return a;}));
@@ -590,7 +592,7 @@ async function runSearch() {
     el('select-mode-btn').style.display='';
     el('add-all-btn').style.display='';
     toast(`找到 ${articles.length} 篇文章`,'ok');
-  } catch(e) { toast(`搜尋失敗：${e.message}`,'err'); setStatus('Error'); setProgress(100,true); }
+  } catch(e) { toast(`搜尋失敗：${e.message}`,'err'); setStatus('Error'); setProgress(100,true); el('search-btn').disabled = false; }
   el('search-btn').disabled = false;
 }
 

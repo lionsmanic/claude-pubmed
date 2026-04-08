@@ -814,7 +814,9 @@ async function toggleAnalysis(idx) {
     const text = await callGemini(articles[idx]);
     analysisCache[idx] = text;
     inner.innerHTML = renderMd(text);
-    addToCartSilent(idx);
+    // 分析完成後更新購物車中同一篇的 analysis 欄位（若已在購物車）
+    const existing = cart.find(c => c.pmid === articles[idx].pmid);
+    if (existing) { existing.analysis = text; cartSave(); }
     setStatus('Ready',false);
   } catch(e) {
     inner.innerHTML=`<p style="padding:1rem;color:var(--danger)">分析失敗：${e.message}</p>`;
@@ -864,8 +866,10 @@ async function runBatchItem(idx, total, pos=null) {
   try {
     const text = await callGemini(articles[idx]);
     analysisCache[idx] = text;
-    inner.innerHTML = `<div class="analysis-progress">✓ 分析完成</div>` + renderMd(text);
-    addToCartSilent(idx);
+    inner.innerHTML = `<div class="analysis-progress">✓ 分析完成，可手動加入購物車</div>` + renderMd(text);
+    // 更新購物車中同一篇的 analysis（若已在購物車）
+    const existing = cart.find(c => c.pmid === articles[idx].pmid);
+    if (existing) { existing.analysis = text; cartSave(); }
   } catch(e) {
     inner.innerHTML=`<p style="padding:1rem;color:var(--danger)">分析失敗：${e.message}</p>`;
   }
@@ -1058,6 +1062,10 @@ async function triggerGitHubReport() {
   const owner=v('gh-owner'), repo=v('gh-repo'), branch=v('gh-branch')||'main';
   const workflow=v('gh-workflow')||'weekly_report.yml', token=v('gh-token');
   if (!owner||!repo||!token) { toast('請填寫 GitHub 帳號、Repo 和 Token','err'); return; }
+  if (!cart.length) { toast('購物車是空的，請先加入文章','err'); return; }
+
+  // 把購物車 PMID 清單傳給 Actions（最多傳50篇避免超出input長度）
+  const pmids = cart.slice(0,50).map(c=>c.pmid).join(',');
 
   setStatus('Triggering GitHub Actions…',true);
   const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`;
@@ -1071,18 +1079,24 @@ async function triggerGitHubReport() {
         'X-GitHub-Api-Version':'2022-11-28',
         'Content-Type':'application/json'
       },
-      body:JSON.stringify({ref:branch, inputs:{days_back:v('days-back')||'7',max_results:v('max-results')||'10'}})
+      body:JSON.stringify({
+        ref: branch,
+        inputs: {
+          pmids: pmids,          // 傳入指定 PMID 清單
+          days_back: v('days-back')||'7',
+          max_results: v('max-results')||'10'
+        }
+      })
     });
 
     if (resp.status===204) {
-      toast('已觸發！約 2–3 分鐘後信件寄出 ✓','ok');
+      toast(`已觸發！將寄出購物車 ${cart.length} 篇文章，約 2–3 分鐘後收到 ✓`,'ok');
       setStatus('Actions triggered',false);
     } else {
       const err = await resp.json().catch(()=>({}));
       const msg = err.message || `HTTP ${resp.status}`;
       toast(`觸發失敗：${msg}`,'err');
-      // Diagnose common errors
-      if (resp.status===404) toast('404：請確認 Repo 名稱、分支名稱和 Workflow 檔名是否正確','err');
+      if (resp.status===404) toast('404：請確認 Repo 名稱、分支名稱和 Workflow 檔名','err');
       if (resp.status===401||resp.status===403) toast('403：Token 無效或缺少 workflow 權限','err');
       setStatus('Error',false);
     }

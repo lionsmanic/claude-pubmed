@@ -179,7 +179,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
 .empty p{font-size:.88rem;color:var(--ink-muted);line-height:1.8;}
 
 /* TOAST */
-#toast{position:fixed;bottom:2rem;right:2rem;z-index:999;
+#toast{position:fixed;bottom:5rem;right:1rem;z-index:999;
   background:var(--ink);color:var(--cream);border-radius:10px;padding:.75rem 1.3rem;
   font-size:.83rem;box-shadow:0 8px 30px rgba(0,0,0,.2);
   transform:translateY(14px) scale(.96);opacity:0;transition:all .25s;
@@ -196,8 +196,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
 .analysis-progress{
   font-size:.75rem;color:var(--ink-muted);font-family:'JetBrains Mono',monospace;
   padding:.4rem .8rem;background:var(--gold-pale);border-radius:6px;
-  border:1px solid var(--sand);display:inline-block;margin-bottom:.8rem;
-}
+  border:1px solid var(--sand);display:inline-block;margin-bottom:.8rem;}
 
 /* CART DRAWER */
 #cart-overlay{position:fixed;inset:0;background:rgba(44,31,20,.45);z-index:200;
@@ -231,28 +230,158 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
 .cart-item-meta{font-size:.7rem;color:var(--ink-muted);font-family:'JetBrains Mono',monospace;}
 .cart-item-tag{font-size:.65rem;background:var(--gold-pale);color:var(--sienna);
   border:1px solid var(--sand);border-radius:4px;padding:1px 6px;margin-left:4px;}
-.cart-remove{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:none;
+.cart-remove{flex-shrink:0;width:32px;height:32px;border-radius:50%;border:none;
   background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1rem;
   display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .cart-remove:hover{background:var(--danger-pale);color:var(--danger);}
-
 .cart-empty{text-align:center;padding:3rem 1rem;color:var(--ink-muted);}
 .cart-empty-icon{font-family:'Playfair Display',serif;font-style:italic;font-size:2.5rem;color:var(--sand);margin-bottom:.8rem;}
 
+/* SIDEBAR OVERLAY (mobile) */
+#sidebar-overlay{position:fixed;inset:0;background:rgba(44,31,20,.5);z-index:150;
+  display:none;backdrop-filter:blur(1px);}
+#sidebar-overlay.open{display:block;}
+
 /* header cart button */
-.cart-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;
-  cursor:pointer;color:rgba(255,255,255,.7);font-size:.78rem;font-weight:500;
+.cart-btn{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;
+  cursor:pointer;color:rgba(255,255,255,.75);font-size:.78rem;font-weight:500;
   transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;}
-.cart-btn:hover{background:rgba(255,255,255,.14);color:white;}
+.cart-btn:hover{background:rgba(255,255,255,.15);color:white;}
 .cart-btn-badge{background:var(--rust);color:white;border-radius:50%;
   width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;
   font-size:.62rem;font-weight:700;}
+
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:40px;height:40px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;cursor:pointer;padding:8px;flex-shrink:0;}
+.hamburger span{display:block;height:2px;background:rgba(255,255,255,.8);border-radius:1px;
+  transition:all .25s;}
+
+/* BOTTOM NAV (mobile only) */
+#bottom-nav{display:none;}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  body{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  /* Header: compact */
+  header{
+    padding:0 1rem;height:56px;gap:0.8rem;
+    grid-column:1;
+  }
+  .logo-text p{display:none;}
+  .logo-text h1{font-size:.95rem;}
+  .logo-mark{width:30px;height:30px;}
+  .hamburger{display:flex;}
+  .status-pill{display:none;}
+  .cart-btn span:not(.cart-btn-badge){display:none;}
+  .cart-btn{padding:7px 10px;border-radius:50%;width:38px;height:38px;
+    justify-content:center;}
+
+  /* Sidebar: slide-in drawer from left */
+  aside{
+    position:fixed;left:0;top:0;bottom:0;width:320px;max-width:88vw;
+    height:100vh;z-index:151;
+    transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+    border-right:1.5px solid var(--border);
+    box-shadow:4px 0 30px rgba(44,31,20,.15);
+    padding-top:70px;
+  }
+  aside.open{transform:translateX(0);}
+
+  /* Main: full width, bottom padding for nav */
+  main{
+    padding:1.2rem 1rem 5rem;
+    height:auto;
+    overflow-y:visible;
+    grid-column:1;
+  }
+
+  /* Toolbar: compact, scrollable row */
+  .toolbar{
+    gap:.5rem;
+    margin-bottom:1.2rem;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:.3rem;
+  }
+  .toolbar::-webkit-scrollbar{display:none;}
+  .toolbar-title{font-size:1.1rem;white-space:nowrap;}
+  .toolbar-gap{min-width:.5rem;flex:none;}
+
+  /* Select bar: wrap */
+  #select-bar{flex-wrap:wrap;gap:.5rem;padding:.6rem .8rem;}
+
+  /* Article cards: tighter */
+  .card-top{padding:1rem 1rem .2rem;}
+  .card-num{font-size:1.3rem;min-width:26px;}
+  .card-en{font-size:.92rem;}
+  .card-zh{font-size:.84rem;}
+  .card-actions{padding:.7rem 1rem 1rem;gap:.4rem;}
+  .analysis-inner{padding:1.2rem 1rem;}
+  .analysis-body{font-size:.85rem;}
+
+  /* Bottom nav */
+  #bottom-nav{
+    display:flex;
+    position:fixed;bottom:0;left:0;right:0;
+    height:60px;
+    background:white;
+    border-top:1.5px solid var(--border);
+    box-shadow:0 -4px 20px rgba(80,40,10,.08);
+    z-index:100;
+    align-items:stretch;
+  }
+  .nav-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;cursor:pointer;border:none;background:none;
+    color:var(--ink-muted);font-size:.62rem;font-weight:500;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    transition:color .15s;padding:0;position:relative;
+  }
+  .nav-item.active{color:var(--teal);}
+  .nav-item:active{background:var(--parchment);}
+  .nav-icon{font-size:1.25rem;line-height:1;}
+  .nav-badge{position:absolute;top:6px;right:calc(50% - 16px);
+    background:var(--rust);color:white;border-radius:10px;
+    font-size:.55rem;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;
+    display:none;}
+  .nav-badge.show{display:block;}
+
+  /* Cart drawer full-height on mobile */
+  #cart-drawer{width:100%;max-width:100%;right:0;
+    top:auto;bottom:0;height:92vh;
+    transform:translateY(100%);border-radius:20px 20px 0 0;}
+  #cart-drawer.open{transform:translateY(0);}
+  #cart-overlay{z-index:200;}
+
+  /* Toast above bottom nav */
+  #toast{bottom:4.5rem;}
+}
+
+@media (max-width: 480px) {
+  .card-actions .btn-sm{font-size:.72rem;padding:.3rem .6rem;}
+  .btn{font-size:.82rem;}
+  .check-item{font-size:.8rem;}
+  label{font-size:.8rem;}
+  input[type=text],input[type=password],input[type=email],input[type=number]{
+    font-size:.85rem;padding:.55rem .8rem;}
+}
+
 </style>
 </head>
 <body>
 
 <header>
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="設定選單">
+    <span></span><span></span><span></span>
+  </button>
   <div class="logo">
     <div class="logo-mark"></div>
     <div class="logo-text">
@@ -262,7 +391,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
   </div>
   <div class="header-right" style="display:flex;align-items:center;gap:.8rem;">
     <button class="cart-btn" onclick="openCart()">
-      🛒 購物車
+      🛒 <span>購物車</span>
       <span class="cart-btn-badge" id="cart-badge" style="display:none">0</span>
     </button>
     <div class="status-pill">
@@ -272,13 +401,19 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
   </div>
 </header>
 
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <!-- CART DRAWER -->
 <div id="cart-overlay" onclick="closeCart()"></div>
 <div id="cart-drawer">
+  <div style="display:flex;justify-content:center;padding:.6rem 0 0;flex-shrink:0;">
+    <div style="width:40px;height:4px;background:var(--sand);border-radius:2px;"></div>
+  </div>
   <div class="drawer-header">
     <span class="drawer-title">📋 報告購物車</span>
     <span id="drawer-count" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--ink-muted)">0 篇</span>
-    <button onclick="closeCart()" style="border:none;background:none;cursor:pointer;font-size:1.2rem;color:var(--ink-muted);padding:4px 8px;">✕</button>
+    <button onclick="closeCart()" style="border:none;background:none;cursor:pointer;font-size:1.2rem;color:var(--ink-muted);padding:4px 8px;min-width:36px;min-height:36px;">✕</button>
   </div>
   <div class="drawer-body" id="drawer-body">
     <div class="cart-empty">
@@ -292,12 +427,12 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
       <button class="btn btn-teal btn-sm" style="flex:1" onclick="closeCart();triggerGitHubReport()">寄出全部報告</button>
     </div>
     <p style="font-size:.7rem;color:var(--ink-muted);text-align:center;line-height:1.5">
-      購物車內容存在瀏覽器，換主題搜尋不會消失。<br>點「寄出」會觸發 GitHub Actions 寄信到 Gmail。
+      購物車儲存在瀏覽器，換主題搜尋不會消失。
     </p>
   </div>
 </div>
 
-<aside>
+<aside id="sidebar">
   <div class="panel">
     <div class="panel-label">API 設定</div>
     <label>Gemini API Key</label>
@@ -326,7 +461,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
       <div><label>最近幾天</label><input type="number" id="days-back" value="14" min="1" max="365" /></div>
       <div><label>篇數上限</label><input type="number" id="max-results" value="20" min="1" max="100" /></div>
     </div>
-    <button class="btn btn-gold" id="search-btn" onclick="runSearch()">搜尋最新文獻</button>
+    <button class="btn btn-gold" id="search-btn" onclick="runSearch();closeSidebar()">搜尋最新文獻</button>
   </div>
 
   <div class="panel">
@@ -360,8 +495,8 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
     <span class="count-pill" id="results-count" style="display:none">0 篇</span>
     <div class="toolbar-gap"></div>
     <button class="btn btn-outline btn-sm" id="add-all-btn" onclick="addAllToCart()" style="display:none">全加入購物車</button>
-    <button class="btn btn-outline btn-sm" onclick="toggleSelectMode()" id="select-mode-btn" style="display:none">☐ 勾選模式</button>
-    <button class="btn btn-outline btn-sm" onclick="openCart()">🛒 查看購物車</button>
+    <button class="btn btn-outline btn-sm" onclick="toggleSelectMode()" id="select-mode-btn" style="display:none">☐ 勾選</button>
+    <button class="btn btn-outline btn-sm" onclick="openCart()">🛒 購物車</button>
     <button class="btn btn-teal btn-sm" id="analyze-all-btn" onclick="analyzeAll()" style="display:none">全部分析</button>
     <button class="btn btn-stop btn-sm" id="abort-btn" style="display:none" onclick="abortAll()">⏹ 停止</button>
   </div>
@@ -381,10 +516,31 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
     <div class="empty">
       <div class="empty-glyph">Gyn</div>
       <h2>尚無文獻</h2>
-      <p>設定左側搜尋條件，點「搜尋最新文獻」<br>系統從 PubMed 抓取後由 Gemini 深度評讀</p>
+      <p>點左上角選單設定搜尋條件<br>系統從 PubMed 抓取後由 Gemini 深度評讀</p>
     </div>
   </div>
 </main>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav id="bottom-nav">
+  <button class="nav-item" onclick="toggleSidebar()">
+    <span class="nav-icon">⚙️</span>
+    <span>搜尋設定</span>
+  </button>
+  <button class="nav-item active" onclick="scrollToTop()">
+    <span class="nav-icon">📄</span>
+    <span>文獻列表</span>
+  </button>
+  <button class="nav-item" onclick="openCart()">
+    <span class="nav-icon">🛒</span>
+    <span>購物車</span>
+    <span class="nav-badge" id="nav-badge">0</span>
+  </button>
+  <button class="nav-item" onclick="triggerGitHubReport()">
+    <span class="nav-icon">✉️</span>
+    <span>寄送報告</span>
+  </button>
+</nav>
 
 <div id="toast"></div>
 
@@ -832,13 +988,31 @@ function clearCart() {
   toast('購物車已清空');
 }
 
+/* ── SIDEBAR (mobile toggle) ── */
+function toggleSidebar() {
+  const s = el('sidebar'), o = el('sidebar-overlay');
+  const open = s.classList.toggle('open');
+  o.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+function closeSidebar() {
+  el('sidebar').classList.remove('open');
+  el('sidebar-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function scrollToTop() {
+  document.querySelector('main').scrollTo({top:0, behavior:'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
 function updateCartUI() {
   const n = cart.length;
-  // header badge
   const badge = el('cart-badge');
   badge.textContent = n; badge.style.display = n > 0 ? 'inline-flex' : 'none';
-  // drawer count
   el('drawer-count').textContent = `${n} 篇`;
+  // bottom nav badge
+  const nb = el('nav-badge');
+  if (nb) { nb.textContent = n; nb.classList.toggle('show', n > 0); }
 }
 
 /* ── CART DRAWER ── */

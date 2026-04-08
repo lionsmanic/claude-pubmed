@@ -8,6 +8,10 @@ on:
   # 也可以手動在 GitHub 網頁上觸發
   workflow_dispatch:
     inputs:
+      pmids:
+        description: '指定文章 PMID 清單（逗號分隔），若填寫則只寄這些文章'
+        required: false
+        default: ''
       days_back:
         description: '搜尋最近幾天的文章'
         required: false
@@ -40,6 +44,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          PMIDS: ${{ github.event.inputs.pmids || '' }}
           DAYS_BACK: ${{ github.event.inputs.days_back || '7' }}
           MAX_RESULTS: ${{ github.event.inputs.max_results || '10' }}
         run: |

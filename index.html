@@ -507,6 +507,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
     <button class="btn btn-outline btn-sm" onclick="selectAll()">全選</button>
     <button class="btn btn-outline btn-sm" onclick="deselectAll()">取消全選</button>
     <button class="btn btn-selected btn-sm" id="analyze-selected-btn" onclick="analyzeSelected()" disabled>分析已選取</button>
+    <button class="btn btn-outline btn-sm" id="cart-selected-btn" onclick="addSelectedToCart()" disabled style="border-color:var(--gold);color:var(--gold)">加入購物車</button>
     <button class="btn btn-outline btn-sm" onclick="exitSelectMode()">離開勾選</button>
   </div>
 
@@ -916,19 +917,35 @@ function onCheckChange(idx) {
     selectedItems.delete(idx);
     el(`card-${idx}`).classList.remove('selected');
   }
-  el('sel-num').textContent = selectedItems.size;
-  el('analyze-selected-btn').disabled = selectedItems.size === 0;
+  const n = selectedItems.size;
+  el('sel-num').textContent = n;
+  el('analyze-selected-btn').disabled = n === 0;
+  el('cart-selected-btn').disabled = n === 0;
 }
 function selectAll() {
   articles.forEach((_,i)=>{ el(`chk-${i}`).checked=true; selectedItems.add(i); el(`card-${i}`).classList.add('selected'); });
-  el('sel-num').textContent=selectedItems.size;
+  const n = selectedItems.size;
+  el('sel-num').textContent=n;
   el('analyze-selected-btn').disabled=false;
+  el('cart-selected-btn').disabled=false;
 }
 function deselectAll() {
   articles.forEach((_,i)=>{ el(`chk-${i}`).checked=false; el(`card-${i}`).classList.remove('selected'); });
   selectedItems.clear();
   el('sel-num').textContent=0;
   el('analyze-selected-btn').disabled=true;
+  el('cart-selected-btn').disabled=true;
+}
+
+function addSelectedToCart() {
+  if (!selectedItems.size) return;
+  let added = 0;
+  [...selectedItems].forEach(idx => {
+    const a = cartArticleFromIdx(idx);
+    if (!cart.find(c => c.pmid === a.pmid)) { cart.push(a); added++; }
+  });
+  cartSave(); updateCartUI();
+  toast(added > 0 ? `已加入 ${added} 篇到購物車（共 ${cart.length} 篇）` : '已選文章都在購物車中', 'ok');
 }
 function hideSelectUI() {
   selectMode=false;

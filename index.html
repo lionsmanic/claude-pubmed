@@ -198,6 +198,56 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
   padding:.4rem .8rem;background:var(--gold-pale);border-radius:6px;
   border:1px solid var(--sand);display:inline-block;margin-bottom:.8rem;
 }
+
+/* CART DRAWER */
+#cart-overlay{position:fixed;inset:0;background:rgba(44,31,20,.45);z-index:200;
+  display:none;backdrop-filter:blur(2px);}
+#cart-overlay.open{display:block;}
+#cart-drawer{position:fixed;right:0;top:0;bottom:0;width:480px;max-width:95vw;
+  background:var(--warm-white);box-shadow:-8px 0 40px rgba(44,31,20,.18);
+  z-index:201;display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+#cart-drawer.open{transform:translateX(0);}
+.drawer-header{padding:1.3rem 1.5rem;border-bottom:1.5px solid var(--border);
+  display:flex;align-items:center;gap:.8rem;background:white;flex-shrink:0;}
+.drawer-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ink);flex:1;}
+.drawer-body{flex:1;overflow-y:auto;padding:1rem 1.5rem;}
+.drawer-body::-webkit-scrollbar{width:4px;}
+.drawer-body::-webkit-scrollbar-thumb{background:var(--sand);border-radius:2px;}
+.drawer-footer{padding:1rem 1.5rem;border-top:1.5px solid var(--border);
+  background:white;flex-shrink:0;display:flex;flex-direction:column;gap:.7rem;}
+
+.cart-item{background:white;border:1.5px solid var(--border);border-radius:12px;
+  padding:.9rem 1rem;margin-bottom:.8rem;display:flex;gap:.8rem;align-items:flex-start;
+  transition:border-color .2s;}
+.cart-item:hover{border-color:var(--border-warm);}
+.cart-item-num{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1.2rem;color:var(--sand);min-width:24px;flex-shrink:0;}
+.cart-item-body{flex:1;min-width:0;}
+.cart-item-en{font-size:.82rem;font-weight:600;color:var(--ink);line-height:1.4;margin-bottom:.2rem;}
+.cart-item-en a{color:inherit;text-decoration:none;}
+.cart-item-en a:hover{color:var(--teal);}
+.cart-item-zh{font-size:.78rem;color:var(--teal);margin-bottom:.25rem;line-height:1.3;}
+.cart-item-meta{font-size:.7rem;color:var(--ink-muted);font-family:'JetBrains Mono',monospace;}
+.cart-item-tag{font-size:.65rem;background:var(--gold-pale);color:var(--sienna);
+  border:1px solid var(--sand);border-radius:4px;padding:1px 6px;margin-left:4px;}
+.cart-remove{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:none;
+  background:transparent;color:var(--ink-muted);cursor:pointer;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.cart-remove:hover{background:var(--danger-pale);color:var(--danger);}
+
+.cart-empty{text-align:center;padding:3rem 1rem;color:var(--ink-muted);}
+.cart-empty-icon{font-family:'Playfair Display',serif;font-style:italic;font-size:2.5rem;color:var(--sand);margin-bottom:.8rem;}
+
+/* header cart button */
+.cart-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:5px 14px;
+  cursor:pointer;color:rgba(255,255,255,.7);font-size:.78rem;font-weight:500;
+  transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;}
+.cart-btn:hover{background:rgba(255,255,255,.14);color:white;}
+.cart-btn-badge{background:var(--rust);color:white;border-radius:50%;
+  width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:.62rem;font-weight:700;}
 </style>
 </head>
 <body>
@@ -210,13 +260,42 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
       <p>PubMed × Gemini AI · 婦科腫瘤文獻智慧評讀</p>
     </div>
   </div>
-  <div class="header-right">
+  <div class="header-right" style="display:flex;align-items:center;gap:.8rem;">
+    <button class="cart-btn" onclick="openCart()">
+      🛒 購物車
+      <span class="cart-btn-badge" id="cart-badge" style="display:none">0</span>
+    </button>
     <div class="status-pill">
       <div class="pulse" id="status-dot"></div>
       <span id="status-text">Ready</span>
     </div>
   </div>
 </header>
+
+<!-- CART DRAWER -->
+<div id="cart-overlay" onclick="closeCart()"></div>
+<div id="cart-drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">📋 報告購物車</span>
+    <span id="drawer-count" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--ink-muted)">0 篇</span>
+    <button onclick="closeCart()" style="border:none;background:none;cursor:pointer;font-size:1.2rem;color:var(--ink-muted);padding:4px 8px;">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">∅</div>
+      <p style="font-size:.85rem">購物車是空的<br>搜尋文章後點「+ 加入」或「全加入購物車」</p>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <div style="display:flex;gap:.6rem;">
+      <button class="btn btn-outline btn-sm" style="flex:1" onclick="clearCart()">清空購物車</button>
+      <button class="btn btn-teal btn-sm" style="flex:1" onclick="closeCart();triggerGitHubReport()">寄出全部報告</button>
+    </div>
+    <p style="font-size:.7rem;color:var(--ink-muted);text-align:center;line-height:1.5">
+      購物車內容存在瀏覽器，換主題搜尋不會消失。<br>點「寄出」會觸發 GitHub Actions 寄信到 Gmail。
+    </p>
+  </div>
+</div>
 
 <aside>
   <div class="panel">
@@ -251,7 +330,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
   </div>
 
   <div class="panel">
-    <div class="panel-label">立即寄送報告 <span class="n-badge" id="cart-count" style="display:none">0</span></div>
+    <div class="panel-label">立即寄送報告</div>
     <label>GitHub 帳號</label>
     <input type="text" id="gh-owner" placeholder="lionsmanic" />
     <label>Repository 名稱</label>
@@ -280,8 +359,9 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
     <span class="toolbar-title">文獻列表</span>
     <span class="count-pill" id="results-count" style="display:none">0 篇</span>
     <div class="toolbar-gap"></div>
+    <button class="btn btn-outline btn-sm" id="add-all-btn" onclick="addAllToCart()" style="display:none">全加入購物車</button>
     <button class="btn btn-outline btn-sm" onclick="toggleSelectMode()" id="select-mode-btn" style="display:none">☐ 勾選模式</button>
-    <button class="btn btn-outline btn-sm" onclick="clearCart()">清空購物車</button>
+    <button class="btn btn-outline btn-sm" onclick="openCart()">🛒 查看購物車</button>
     <button class="btn btn-teal btn-sm" id="analyze-all-btn" onclick="analyzeAll()" style="display:none">全部分析</button>
     <button class="btn btn-stop btn-sm" id="abort-btn" style="display:none" onclick="abortAll()">⏹ 停止</button>
   </div>
@@ -311,7 +391,8 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
 <script>
 const JOURNALS = ["New England Journal of Medicine","The Lancet","The Lancet Oncology","Journal of Clinical Oncology","Nature Medicine","Gynecologic Oncology","Journal of Gynecologic Oncology","Annals of Oncology","Cancer","JAMA Oncology"];
 
-let articles = [], analysisCache = {}, cartItems = [];
+let articles = [], analysisCache = {};
+let cart = cartLoad();   // persistent across searches
 let abortFlag = false, isRunningBatch = false;
 let selectMode = false, selectedItems = new Set();
 
@@ -490,7 +571,7 @@ async function runSearch() {
   setStatus('Searching PubMed…',true); setProgress(15);
   el('search-btn').disabled = true;
   el('results-container').innerHTML = '';
-  articles = []; analysisCache = {}; cartItems = []; selectedItems.clear();
+  articles = []; analysisCache = {}; selectedItems.clear();
   hideSelectUI();
 
   try {
@@ -507,6 +588,7 @@ async function runSearch() {
     el('results-count').textContent=`${articles.length} 篇`; el('results-count').style.display='';
     el('analyze-all-btn').style.display='';
     el('select-mode-btn').style.display='';
+    el('add-all-btn').style.display='';
     toast(`找到 ${articles.length} 篇文章`,'ok');
   } catch(e) { toast(`搜尋失敗：${e.message}`,'err'); setStatus('Error'); setProgress(100,true); }
   el('search-btn').disabled = false;
@@ -691,13 +773,109 @@ function hideSelectUI() {
   el('select-bar').classList.remove('show');
   el('select-mode-btn').style.display='none';
   el('analyze-all-btn').style.display='none';
+  el('add-all-btn').style.display='none';
 }
 
-/* ── CART ── */
-function addToCartSilent(idx){if(!cartItems.includes(idx)){cartItems.push(idx);updateCart();}}
-function addToCart(idx){addToCartSilent(idx);toast(`已加入報告 (${cartItems.length} 篇)`,'ok');}
-function clearCart(){cartItems=[];updateCart();toast('購物車已清空');}
-function updateCart(){const n=cartItems.length,e=el('cart-count');e.textContent=n;e.style.display=n>0?'inline-flex':'none';}
+/* ── CART (persistent, stores full article objects) ── */
+// cart is an array of {pmid, title, titleZh, journal, date, link, doi, analysis}
+// stored in localStorage so it survives topic changes
+
+function cartLoad() {
+  try { return JSON.parse(localStorage.getItem('gynonc_cart') || '[]'); }
+  catch { return []; }
+}
+function cartSave() {
+  localStorage.setItem('gynonc_cart', JSON.stringify(cart));
+}
+
+function cartArticleFromIdx(idx) {
+  const a = articles[idx];
+  return {
+    pmid: a.pmid, title: a.title, titleZh: a.titleZh || '',
+    journal: a.journal, date: a.date, link: a.link, doi: a.doi,
+    analysis: analysisCache[idx] || ''
+  };
+}
+
+function addToCartSilent(idx) {
+  const a = cartArticleFromIdx(idx);
+  if (!cart.find(c => c.pmid === a.pmid)) {
+    cart.push(a); cartSave(); updateCartUI();
+  }
+}
+function addToCart(idx) {
+  const a = cartArticleFromIdx(idx);
+  if (!cart.find(c => c.pmid === a.pmid)) {
+    cart.push(a); cartSave(); updateCartUI();
+    toast(`已加入購物車（共 ${cart.length} 篇）`, 'ok');
+  } else {
+    toast('此文章已在購物車中');
+  }
+}
+function addAllToCart() {
+  let added = 0;
+  articles.forEach((_, i) => {
+    const a = cartArticleFromIdx(i);
+    if (!cart.find(c => c.pmid === a.pmid)) { cart.push(a); added++; }
+  });
+  cartSave(); updateCartUI();
+  toast(added > 0 ? `已加入 ${added} 篇（共 ${cart.length} 篇）` : '全部文章已在購物車中', 'ok');
+}
+function removeFromCart(pmid) {
+  cart = cart.filter(c => c.pmid !== pmid);
+  cartSave(); updateCartUI(); renderDrawer();
+}
+function clearCart() {
+  cart = []; cartSave(); updateCartUI(); renderDrawer();
+  toast('購物車已清空');
+}
+
+function updateCartUI() {
+  const n = cart.length;
+  // header badge
+  const badge = el('cart-badge');
+  badge.textContent = n; badge.style.display = n > 0 ? 'inline-flex' : 'none';
+  // drawer count
+  el('drawer-count').textContent = `${n} 篇`;
+}
+
+/* ── CART DRAWER ── */
+function openCart() {
+  renderDrawer();
+  el('cart-overlay').classList.add('open');
+  el('cart-drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  el('cart-overlay').classList.remove('open');
+  el('cart-drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderDrawer() {
+  const body = el('drawer-body');
+  if (!cart.length) {
+    body.innerHTML = `<div class="cart-empty">
+      <div class="cart-empty-icon">∅</div>
+      <p style="font-size:.85rem">購物車是空的<br>搜尋文章後點「+ 加入」或「全加入購物車」</p>
+    </div>`;
+    return;
+  }
+  body.innerHTML = cart.map((c, i) => `
+    <div class="cart-item">
+      <div class="cart-item-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="cart-item-body">
+        <div class="cart-item-en"><a href="${c.link}" target="_blank">${c.title}</a></div>
+        ${c.titleZh ? `<div class="cart-item-zh">${c.titleZh}</div>` : ''}
+        <div class="cart-item-meta">
+          ${c.journal}
+          ${c.date ? `<span class="cart-item-tag">${c.date}</span>` : ''}
+          ${c.analysis ? `<span class="cart-item-tag" style="background:var(--teal-pale);color:var(--teal);border-color:rgba(42,124,116,.2)">✓ 已評讀</span>` : ''}
+        </div>
+      </div>
+      <button class="cart-remove" onclick="removeFromCart('${c.pmid}')" title="從購物車移除">✕</button>
+    </div>`).join('');
+}
 
 /* ── GITHUB ACTIONS ── */
 async function triggerGitHubReport() {
@@ -751,7 +929,7 @@ function toast(msg,type=''){
   clearTimeout(tt); tt=setTimeout(()=>{e.className='';},3800);
 }
 
-window.addEventListener('load', loadConfig);
+window.addEventListener('load', () => { loadConfig(); updateCartUI(); });
 </script>
 </body>
 </html>

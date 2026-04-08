@@ -24,6 +24,7 @@ from Bio import Entrez
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 EMAIL_ADDRESS  = os.environ.get("EMAIL_ADDRESS", "")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "")
+PMIDS          = os.environ.get("PMIDS", "").strip()          # 購物車指定 PMID
 DAYS_BACK      = int(os.environ.get("DAYS_BACK", "7"))
 MAX_RESULTS    = int(os.environ.get("MAX_RESULTS", "10"))
 
@@ -70,6 +71,42 @@ def build_query() -> str:
         return f"{term_q} AND {journal_q}"
 
     return term_q
+
+
+def fetch_by_pmids(pmid_list: list[str]) -> list[dict]:
+    """直接用 PMID 清單抓取文章（購物車模式）"""
+    print(f"[PubMed] Fetching {len(pmid_list)} specific articles by PMID...")
+    handle = Entrez.efetch(db="pubmed", id=pmid_list, retmode="xml")
+    articles = Entrez.read(handle)
+    parsed = []
+    for art in articles.get("PubmedArticle", []):
+        try:
+            cit     = art["MedlineCitation"]
+            article = cit["Article"]
+            title   = str(article["ArticleTitle"])
+            journal = str(article["Journal"]["Title"])
+            if "Abstract" in article:
+                abstract = " ".join(str(x) for x in article["Abstract"]["AbstractText"])
+            else:
+                abstract = "No abstract available."
+            ids  = art["PubmedData"]["ArticleIdList"]
+            doi  = next((str(x) for x in ids if x.attributes["IdType"] == "doi"), None)
+            pmid = next((str(x) for x in ids if x.attributes["IdType"] == "pubmed"), "")
+            link = f"https://doi.org/{doi}" if doi else f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
+            pub_date = ""
+            try:
+                pub_date = str(article["Journal"]["JournalIssue"]["PubDate"].get("Year", ""))
+            except Exception:
+                pass
+            parsed.append({
+                "pmid": pmid, "title": title, "journal": journal,
+                "abstract": abstract, "link": link, "doi": doi or "",
+                "date": pub_date,
+            })
+        except Exception as e:
+            print(f"[Parser] Skip article: {e}")
+    print(f"[Parser] Parsed {len(parsed)} articles.")
+    return parsed
 
 
 def fetch_articles(query: str) -> list[dict]:
@@ -276,34 +313,49 @@ def main():
     print(f"GynOnc Auto Report  |  {datetime.now().strftime('%Y-%m-%d %H:%M UTC')}")
     print("=" * 60)
 
-    # 1. Build query & fetch
-    query    = build_query()
-    articles = fetch_articles(query)
+    # ── 模式判斷 ──────────────────────────────────────────
+    # 若傳入 PMIDS（來自購物車），直接抓那些文章
+    # 若無 PMIDS（每週排程自動執行），用關鍵字搜尋
+
+    if PMIDS:
+        pmid_list = [p.strip() for p in PMIDS.split(",") if p.strip()]
+        print(f"[Mode] 購物車模式：指定 {len(pmid_list)} 篇文章")
+        print(f"[PMIDs] {', '.join(pmid_list)}")
+        articles = fetch_by_pmids(pmid_list)
+        mode_label = "購物車精選"
+    else:
+        print("[Mode] 週報模式：關鍵字搜尋最新文獻")
+        query    = build_query()
+        articles = fetch_articles(query)
+        mode_label = "本週最新"
 
     if not articles:
         print("No articles found. Exiting.")
-        # Save empty report file
         with open("report_output.html", "w") as f:
-            f.write("<p>本週無符合條件的新文獻。</p>")
+            f.write("<p>無符合條件的文獻。</p>")
         return
 
-    # 2. AI analysis (with rate limit)
+    # ── AI 分析 ────────────────────────────────────────────
     analyses = []
     for i, art in enumerate(articles):
         print(f"[Gemini] Analyzing {i+1}/{len(articles)}: {art['title'][:60]}...")
         analysis = analyze_with_gemini(art)
         analyses.append(analysis)
-        time.sleep(1.5)  # Avoid rate limiting
+        time.sleep(1.5)
 
-    # 3. Build HTML
+    # ── 組合 HTML ──────────────────────────────────────────
     html_content = build_email_html(articles, analyses)
+    # 標題改為反映模式
+    html_content = html_content.replace(
+        "婦科腫瘤最新研究",
+        f"GynOnc {mode_label}"
+    )
 
-    # 4. Save as file (always, as GitHub Actions artifact)
+    # ── 儲存 & 寄出 ────────────────────────────────────────
     with open("report_output.html", "w", encoding="utf-8") as f:
         f.write(html_content)
     print("[File] report_output.html saved.")
 
-    # 5. Send email
     send_email(html_content)
 
     print("=" * 60)

@@ -476,9 +476,11 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
     <input type="text" id="gh-workflow" value="weekly_report.yml" placeholder="weekly_report.yml" />
     <label>Personal Access Token</label>
     <input type="password" id="gh-token" placeholder="ghp_..." />
-    <button class="btn btn-teal" onclick="triggerGitHubReport()">觸發 Actions 寄信</button>
+    <button class="btn btn-teal" onclick="triggerGitHubReport()">觸發 Actions 寄信（購物車）</button>
+    <button class="btn btn-outline" style="margin-top:.5rem;border-color:var(--rust);color:var(--rust)" onclick="triggerTrendingReport()">🔥 寄送本月熱門文章</button>
     <p style="font-size:.71rem;color:var(--ink-muted);margin-top:.6rem;line-height:1.6">
       Token 需有 <code style="color:var(--gold)">workflow</code> 權限。<br>
+      「本月熱門」依過去 30 天 Altmetric 關注度排序，不需先加購物車。<br>
       寄信失敗時請確認分支名稱（main/master）和 Workflow 檔名。
     </p>
   </div>
@@ -546,7 +548,7 @@ main::-webkit-scrollbar-thumb{background:var(--sand);border-radius:3px;}
 <div id="toast"></div>
 
 <script>
-const JOURNALS = ["New England Journal of Medicine","The Lancet","The Lancet Oncology","Journal of Clinical Oncology","Nature Medicine","Gynecologic Oncology","Journal of Gynecologic Oncology","Annals of Oncology","Cancer","JAMA Oncology"];
+const JOURNALS = ["Gynecologic Oncology","International Journal of Gynecological Cancer","Journal of Gynecologic Oncology","Gynecologic Oncology Reports","American Journal of Obstetrics and Gynecology","Obstetrics and Gynecology","BJOG","Ultrasound in Obstetrics & Gynecology","Journal of Minimally Invasive Gynecology","International Journal of Hyperthermia","New England Journal of Medicine","The Lancet","The Lancet Oncology","Journal of Clinical Oncology","JAMA","JAMA Oncology","Nature Medicine","Nature Cancer","Nature Reviews. Clinical Oncology","Annals of Oncology","ESMO Open","Cancer","Clinical Cancer Research","Cancer Research","European Journal of Cancer","Journal of the National Cancer Institute","International Journal of Cancer","Journal of the National Comprehensive Cancer Network","Modern Pathology","npj Precision Oncology"];
 
 let articles = [], analysisCache = {};
 let cart = cartLoad();   // persistent across searches
@@ -1074,7 +1076,7 @@ function renderDrawer() {
     </div>`).join('');
 }
 
-/* ── GITHUB ACTIONS ── */
+/* ── GITHUB ACTIONS: 購物車寄信 ── */
 async function triggerGitHubReport() {
   const owner=v('gh-owner'), repo=v('gh-repo'), branch=v('gh-branch')||'main';
   const workflow=v('gh-workflow')||'weekly_report.yml', token=v('gh-token');
@@ -1115,6 +1117,41 @@ async function triggerGitHubReport() {
       toast(`觸發失敗：${msg}`,'err');
       if (resp.status===404) toast('404：請確認 Repo 名稱、分支名稱和 Workflow 檔名','err');
       if (resp.status===401||resp.status===403) toast('403：Token 無效或缺少 workflow 權限','err');
+      setStatus('Error',false);
+    }
+  } catch(e) { toast(`網路錯誤：${e.message}`,'err'); setStatus('Error',false); }
+}
+
+/* ── GITHUB ACTIONS: 本月熱門 ── */
+async function triggerTrendingReport() {
+  const owner=v('gh-owner'), repo=v('gh-repo'), branch=v('gh-branch')||'main';
+  const workflow=v('gh-workflow')||'weekly_report.yml', token=v('gh-token');
+  if (!owner||!repo||!token) { toast('請填寫 GitHub 帳號、Repo 和 Token','err'); return; }
+  setStatus('Triggering trending report…',true);
+  const url = `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`;
+  try {
+    const resp = await fetch(url, {
+      method:'POST',
+      headers:{
+        'Authorization':`Bearer ${token}`,
+        'Accept':'application/vnd.github+json',
+        'X-GitHub-Api-Version':'2022-11-28',
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        ref: branch,
+        inputs: { report_mode:'trending', trend_days:'30', max_results: v('max-results')||'15' }
+      })
+    });
+    if (resp.status===204) {
+      toast('已觸發本月熱門文獻報告，依 Altmetric 關注度排序 🔥','ok');
+      setStatus('Actions triggered',false);
+    } else {
+      const err = await resp.json().catch(()=>({}));
+      toast(`觸發失敗：${err.message || 'HTTP '+resp.status}`,'err');
+      if (resp.status===404) toast('404：請確認 Repo / 分支 / Workflow 檔名','err');
+      if (resp.status===401||resp.status===403) toast('403：Token 缺少 workflow 權限','err');
+      if (resp.status===422) toast('422：請先把 weekly_report.yml 換成支援 report_mode 的新版','err');
       setStatus('Error',false);
     }
   } catch(e) { toast(`網路錯誤：${e.message}`,'err'); setStatus('Error',false); }

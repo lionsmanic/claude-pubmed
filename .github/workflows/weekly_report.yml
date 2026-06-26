@@ -1,23 +1,32 @@
-name: Weekly GynOnc Literature Report
+name: GynOnc Literature Report
 
 on:
-  # 每週一早上 8:00 台灣時間 (UTC+8 = UTC 00:00)
   schedule:
+    # 每週一 08:00 台灣時間 (UTC 00:00) -> 週報模式
     - cron: '0 0 * * 1'
-
-  # 也可以手動在 GitHub 網頁上觸發
+    # 每月 1 號 09:00 台灣時間 (UTC 01:00) -> 本月熱門模式
+    - cron: '0 1 1 * *'
+  # 手動觸發（網頁按鈕或 GitHub UI）
   workflow_dispatch:
     inputs:
+      report_mode:
+        description: '報告模式：weekly（週報）或 trending（本月熱門）'
+        required: false
+        default: 'weekly'
       pmids:
-        description: '指定文章 PMID 清單（逗號分隔），若填寫則只寄這些文章'
+        description: '指定文章 PMID 清單（逗號分隔），若填寫則只寄這些文章（購物車模式，會覆蓋 report_mode）'
         required: false
         default: ''
       days_back:
-        description: '搜尋最近幾天的文章'
+        description: '週報模式：搜尋最近幾天'
         required: false
         default: '7'
+      trend_days:
+        description: '熱門模式：回溯幾天計算關注度'
+        required: false
+        default: '30'
       max_results:
-        description: '最多幾篇'
+        description: '最終寄出篇數上限'
         required: false
         default: '10'
 
@@ -25,7 +34,6 @@ jobs:
   generate-report:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,7 +53,10 @@ jobs:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           PMIDS: ${{ github.event.inputs.pmids || '' }}
+          # 模式判斷：手動觸發用 input；每月 1 號的排程自動切成 trending，其餘為 weekly
+          REPORT_MODE: ${{ github.event.inputs.report_mode || (github.event.schedule == '0 1 1 * *' && 'trending' || 'weekly') }}
           DAYS_BACK: ${{ github.event.inputs.days_back || '7' }}
+          TREND_DAYS: ${{ github.event.inputs.trend_days || '30' }}
           MAX_RESULTS: ${{ github.event.inputs.max_results || '10' }}
         run: |
           python scripts/auto_report.py
@@ -54,6 +65,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: weekly-report-${{ github.run_id }}
+          name: gynonc-report-${{ github.run_id }}
           path: report_output.html
           retention-days: 30
